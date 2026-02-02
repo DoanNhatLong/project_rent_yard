@@ -4,16 +4,22 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table ( name="role")
+@Table(name = "service")
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
-public class Role {
+@Builder
+public class Service {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String name;
-    private boolean isDeleted=false;
+
+    private double price;
+
+    private boolean isDeleted = false;
 }
+
