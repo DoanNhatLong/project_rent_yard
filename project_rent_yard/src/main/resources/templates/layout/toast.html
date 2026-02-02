@@ -1,0 +1,15 @@
+<div th:fragment="toast(message)"
+     th:if="${message != null}"
+     class="toast-container position-fixed top-0 end-0 p-3">
+
+  <div class="toast show" role="alert">
+    <div class="toast-header">
+      <strong class="me-auto text-primary">Thông báo</strong>
+      <button class="btn-close" data-bs-dismiss="toast"></button>
+    </div>
+
+    <div class="toast-body"
+         th:text="${message}">
+    </div>
+  </div>
+</div>
