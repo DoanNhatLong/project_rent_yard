@@ -29,11 +29,13 @@ public class Field {
 
     private boolean isDeleted=false;
 
+    private String imageUrl;
+
     public enum FieldType {
          Field5, Field7
     }
 
     public enum FieldStatus {
-        AVAILABLE, MAINTENANCE
+        AVAILABLE, MAINTENANCE, BOOKED
     }
 }
