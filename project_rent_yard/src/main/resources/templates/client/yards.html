@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sân</title>
+    <th:block th:replace="layout/layout :: library"></th:block>
+    <style>
+        .field-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="layout/navbar:: navbar"></div>
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Danh sách sân bóng</h2>
+
+    <form th:action="@{/clients/yards}" method="get" class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <label class="form-label">Loại sân</label>
+            <select name="fieldType" class="form-select">
+                <option value="">-- Tất cả --</option>
+                <option value="Field5" th:selected="${param.fieldType == 'Field5'}">Sân 5</option>
+                <option value="Field7" th:selected="${param.fieldType == 'Field7'}">Sân 7</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Trạng thái</label>
+            <select name="fieldStatus" class="form-select">
+                <option value="">-- Tất cả --</option>
+                <option value="AVAILABLE" th:selected="${param.fieldStatus == 'AVAILABLE'}">Hoạt động</option>
+                <option value="AVAILABLE" th:selected="${param.fieldStatus == 'BOOKED'}">Đã đặt</option>
+                <option value="MAINTENANCE" th:selected="${param.fieldStatus == 'MAINTENANCE'}">Bảo trì</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Giá từ</label>
+            <input type="number" name="minPrice" class="form-control"
+                   th:value="${param.minPrice}">
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Giá đến</label>
+            <input type="number" name="maxPrice" class="form-control"
+                   th:value="${param.maxPrice}">
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary">Lọc</button>
+            <a th:href="@{/clients/yards}" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+
+    <!-- ===== FIELD LIST (2 sân / row) ===== -->
+    <div class="row">
+        <div class="col-md-6 mb-4" th:each="field : ${fields}">
+            <div class="card h-100">
+
+                <img th:src="${field.imageUrl}"
+                     class="card-img-top field-img" alt="Sân">
+
+
+                <div class="card-body">
+                    <h5 th:text="${field.name}"></h5>
+
+                    <p>
+                        <strong>Loại:</strong>
+                        <span th:text="${field.fieldType}"></span>
+                    </p>
+
+                    <p>
+                        <strong>Giá:</strong>
+                        <span th:text="${#numbers.formatDecimal(field.price,0,'COMMA',0,'POINT')}"></span> VNĐ
+                    </p>
+
+                    <p>
+                        <strong>Trạng thái:</strong>
+
+                        <span th:if="${field.status.name() == 'AVAILABLE'}"
+                              class="badge bg-success">
+                                AVAILABLE
+                        </span>
+
+                        <span th:if="${field.status.name() == 'BOOKED'}"
+                              class="badge bg-primary">
+                                BOOKED
+                        </span>
+
+                        <span th:if="${field.status.name() == 'MAINTENANCE'}"
+                              class="badge bg-secondary">
+        MAINTENANCE
+    </span>
+                    </p>
+
+                </div>
+
+                <div class="card-footer text-center">
+                    <a th:href="@{/clients/yards/{id}(id=${field.id})}"
+                       class="btn btn-outline-primary btn-sm">
+                        Xem chi tiết
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EMPTY ===== -->
+    <div class="alert alert-warning" th:if="${fields.size() == 0}">
+        Không có sân phù hợp
+    </div>
+
+    <!-- ===== PAGINATION ===== -->
+    <nav th:if="${fieldPage.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+
+            <!-- Prev -->
+            <li class="page-item" th:classappend="${fieldPage.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/clients/yards(
+                       page=${fieldPage.number - 1},
+                       fieldType=${param.fieldType},
+                       fieldStatus=${param.fieldStatus},
+                       minPrice=${param.minPrice},
+                       maxPrice=${param.maxPrice}
+                   )}">
+                    &laquo;
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, fieldPage.totalPages - 1)}"
+                th:classappend="${i == fieldPage.number} ? 'active'">
+
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/clients/yards(
+                       page=${i},
+                       fieldType=${param.fieldType},
+                       fieldStatus=${param.fieldStatus},
+                       minPrice=${param.minPrice},
+                       maxPrice=${param.maxPrice}
+                   )}">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item" th:classappend="${fieldPage.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/clients/yards(
+                       page=${fieldPage.number + 1},
+                       fieldType=${param.fieldType},
+                       fieldStatus=${param.fieldStatus},
+                       minPrice=${param.minPrice},
+                       maxPrice=${param.maxPrice}
+                   )}">
+                    &raquo;
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+</div>
+
+</body>
+</html>

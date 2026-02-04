@@ -1,19 +1,22 @@
 package com.example.project_rent_yard.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table ( name="role")
+@Table(name = "note")
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
-@AllArgsConstructor
-public class Role {
+public class Note {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
-    private boolean isDeleted=false;
+
+    private String content;
+
+    private Boolean isDeleted = false;
 }

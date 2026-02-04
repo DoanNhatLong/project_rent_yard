@@ -1,0 +1,101 @@
+<th:block th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom main-navbar">
+        <div class="container-fluid px-4">
+
+            <!-- LEFT -->
+            <div class="d-flex align-items-center">
+
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold me-4" href="/clients">
+                    HiSport
+                </a>
+
+                <!-- Left menu -->
+                <ul class="navbar-nav mb-0">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-danger" href="/clients">
+                            Trang chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            Dành cho đối tác
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            Tin tức
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clients/support">
+                            Hỗ trợ
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- RIGHT -->
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <li class="nav-item me-3">
+                    <a class="nav-link fw-semibold" href="/clients/yards">
+                        🏟️️ Sân tập
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown me-3">
+                    <a class="nav-link fw-semibold"
+                       href="#"
+                       data-bs-toggle="dropdown">
+                        🏠 Khu vực
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Thanh Xuân, Hà Nội</a></li>
+                        <li><a class="dropdown-item" href="#">Cầu Giấy, Hà Nội</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown me-3">
+                    <a class="nav-link fw-semibold"
+                       href="#"
+                       data-bs-toggle="dropdown">
+                        🇻🇳 Tiếng Việt
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Tiếng Việt</a></li>
+                        <li><a class="dropdown-item" href="#">English</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown me-3">
+                    <a class="nav-link"
+                       href="#"
+                       data-bs-toggle="dropdown">
+                        🔔
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><span class="dropdown-item-text">Không có thông báo</span></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link"
+                       href="#"
+                       data-bs-toggle="dropdown">
+                        👤
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Tài khoản</a></li>
+                        <li><a class="dropdown-item" href="#">Đổi mật khẩu</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout">Đăng xuất</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+
+
+</th:block>
