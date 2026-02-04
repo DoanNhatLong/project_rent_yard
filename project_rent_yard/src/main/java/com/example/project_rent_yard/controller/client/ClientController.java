@@ -1,7 +1,9 @@
 package com.example.project_rent_yard.controller.client;
 
 import com.example.project_rent_yard.entity.Field;
+import com.example.project_rent_yard.entity.User;
 import com.example.project_rent_yard.service.IFieldService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,4 +47,15 @@ public class ClientController {
         model.addAttribute("fields", fieldPage.getContent());
         return "/client/yards";
     }
+
+    @GetMapping("/support")
+    public String support(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", user);
+        return "/client/support";
+    }
+
 }
