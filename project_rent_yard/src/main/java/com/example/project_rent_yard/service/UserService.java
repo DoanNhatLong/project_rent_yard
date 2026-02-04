@@ -28,4 +28,9 @@ public class UserService implements IUserService {
         dto.setName(user.getName());
         return dto;
     }
+
+    @Override
+    public boolean existsByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
 }

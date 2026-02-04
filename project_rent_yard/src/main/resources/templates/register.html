@@ -1,14 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
     <th:block th:replace="layout/layout :: library"></th:block>
+
+    <style>
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .error-text {
+            color: red;
+            font-size: 13px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
+
 <body>
 <div class="container">
-    <form >
+    <form th:action="@{/login/register}"
+          method="post"
+          th:object="${registerDto}">
 
+        <div class="form-group">
+            <input placeholder="Nhập name" th:field="*{name}">
+            <small class="error-text"
+                   th:if="${#fields.hasErrors('name')}"
+                   th:errors="*{name}">
+            </small>
+        </div>
+
+        <div class="form-group">
+            <input placeholder="Nhập phone" th:field="*{phone}">
+            <small class="error-text"
+                   th:if="${#fields.hasErrors('phone')}"
+                   th:errors="*{phone}">
+            </small>
+        </div>
+
+        <div class="form-group">
+            <input type="password"
+                   placeholder="Password"
+                   th:field="*{password}">
+            <small class="error-text"
+                   th:if="${#fields.hasErrors('password')}"
+                   th:errors="*{password}">
+            </small>
+        </div>
+
+        <div class="form-group">
+            <input type="password"
+                   placeholder="Confirm password"
+                   th:field="*{confirmPassword}">
+            <small class="error-text"
+                   th:if="${#fields.hasErrors('confirmPassword')}"
+                   th:errors="*{confirmPassword}">
+            </small>
+        </div>
+
+        <button type="submit">Xác nhận</button>
     </form>
 </div>
 </body>

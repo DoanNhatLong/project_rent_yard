@@ -1,14 +1,16 @@
 package com.example.project_rent_yard.controller;
 
+import com.example.project_rent_yard.dto.RegisterDto;
+import com.example.project_rent_yard.dto.RegisterValidator;
 import com.example.project_rent_yard.entity.User;
 import com.example.project_rent_yard.service.IUserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +20,9 @@ import java.util.Objects;
 public class LogInController {
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private RegisterValidator registerValidator;
 
     @GetMapping("")
     public String login() {
@@ -51,7 +56,20 @@ public class LogInController {
     }
 
     @GetMapping("/register")
-    public String register() {
+    public String register(Model model) {
+        model.addAttribute("registerDto", new RegisterDto());
         return "/register";
+    }
+
+    @PostMapping("/register")
+    public String check(
+            @Valid @ModelAttribute("registerDto") RegisterDto registerDto,
+            BindingResult bindingResult
+    ){
+        registerValidator.validate(registerDto,bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
+        return "redirect:/login";
     }
 }

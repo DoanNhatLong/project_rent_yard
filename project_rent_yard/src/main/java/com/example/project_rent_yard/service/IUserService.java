@@ -8,4 +8,5 @@ import java.util.List;
 public interface IUserService {
     List<User> findAll();
     UserDto findDtoById(Integer id);
+    boolean existsByPhone(String phone);
 }
