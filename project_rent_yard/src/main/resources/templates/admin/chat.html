@@ -45,16 +45,13 @@
 <div class="container">
     <h3>💬 Admin Support Chat</h3>
 
-    <!-- USER ĐANG CHAT -->
     <div id="current-user"
          style="margin-bottom:10px; font-weight:bold;">
         Đang chat với: ---
     </div>
 
-    <!-- CHAT BOX -->
     <div id="chat-box"></div>
 
-    <!-- INPUT -->
     <div style="margin-top:10px">
         <input id="message" placeholder="Nhập tin nhắn..." style="width:80%">
         <button onclick="send()">Gửi</button>
@@ -65,9 +62,9 @@
 
 
 <script>
-    const ADMIN_ID = 1;               // admin id (hardcode local)
-    let currentUserId = null;         // user đang chat
-    const userCache = {};             // userId -> userName
+    const ADMIN_ID = 1;
+    let currentUserId = null;
+    const userCache = {};
 
     let socket = new SockJS('/ws');
     let stompClient = Stomp.over(socket);
@@ -77,12 +74,11 @@
         stompClient.subscribe('/topic/chat.user.' + ADMIN_ID, function (msg) {
             let message = JSON.parse(msg.body);
 
-            // bỏ qua ACK từ server
+
             if (message.senderRole === "SERVER") return;
 
             currentUserId = message.senderId;
 
-            // chưa có name -> gọi API
             if (!userCache[currentUserId]) {
                 fetch('/api/users/' + currentUserId)
                     .then(res => res.json())

@@ -15,23 +15,15 @@ public class ChatController {
     @MessageMapping("/chat.send")
     public void send(ChatMessage message) {
 
-        // 1️⃣ Gửi tin nhắn cho người nhận (USER <-> ADMIN)
         simpMessagingTemplate.convertAndSend(
                 "/topic/chat.user." + message.getReceiverId(),
                 message
         );
 
-        // 2️⃣ Gửi xác nhận về cho người gửi (GIỮ NGUYÊN CHỨC NĂNG CŨ)
+
         simpMessagingTemplate.convertAndSend(
                 "/topic/chat.user." + message.getSenderId(),
                 new ChatMessage("SERVER", "Đã nhận tin nhắn")
-        );
-
-        System.out.println(
-                message.getSenderRole() + " [" +
-                        message.getSenderId() + " -> " +
-                        message.getReceiverId() + "] : " +
-                        message.getContent()
         );
     }
 }

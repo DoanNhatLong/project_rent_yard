@@ -2,6 +2,8 @@ package com.example.project_rent_yard.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -12,6 +14,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Where(clause = "is_deleted = 0")
 public class Booking {
 
     @Id
@@ -31,19 +34,20 @@ public class Booking {
     private LocalTime endTime;
 
     @Enumerated(EnumType.STRING)
-    private BookingStatus status;
+    private BookingStatus status= BookingStatus.PENDING;
 
     private double depositAmount;
 
     private boolean isDeleted=false;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime bookingDate;
 
     public enum BookingStatus {
         BOOKED,
         CANCELLED_BY_CUSTOMER,
         CANCELLED_BY_OWNER,
-        COMPLETED
+        COMPLETED,
+        PENDING
     }
 }
 

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rent</title>
+    <th:block th:replace="layout/layout :: library"></th:block>
+    <style>
+        .container {
+            max-width: 480px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .time-select {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        input, select {
+            height: 46px;
+            padding: 0 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .deposit-box label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .deposit-box input {
+            background: #f5f6f8;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+
+        button {
+            height: 48px;
+            border: none;
+            border-radius: 12px;
+            background: #ff1744;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #e0143c;
+        }
+
+    </style>
+</head>
+<body>
+<div th:replace="layout/navbar:: navbar"></div>
+<div class="container">
+    <form th:action="@{/clients/rent}" method="post">
+        <input type="hidden" name="fieldId" th:value="${field.id}">
+
+        <input type="date" name="bookingDate" id="bookingDate" required>
+
+        <div class="time-select">
+            <select id="startTime" name="startTime" required>
+                <option value="">Giờ bắt đầu</option>
+            </select>
+
+            <select id="endTime" name="endTime" required>
+                <option value="">Giờ kết thúc</option>
+            </select>
+        </div>
+
+        <div class="deposit-box">
+            <label>Gía thuê 1 giờ ( VIP giảm 10%) </label>
+
+            <input type="text"
+                   th:value="${field.price} + ' VNĐ'"
+                   readonly>
+        </div>
+
+
+        <button>Thuê</button>
+    </form>
+
+</div>
+
+<div th:replace="layout/date_time_sc:: date_time"></div>
+</body>
+</html>

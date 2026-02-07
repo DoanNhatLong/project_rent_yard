@@ -14,4 +14,6 @@ public interface IFieldService {
             Double minPrice,
             Double maxPrice,
             Pageable pageable);
+
+    Field findById(Integer id);
 }

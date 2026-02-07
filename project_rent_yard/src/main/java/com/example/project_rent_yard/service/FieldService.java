@@ -24,4 +24,9 @@ public class FieldService implements IFieldService {
     public Page<Field> showFields(Field.FieldType fieldType, Field.FieldStatus fieldStatus, Double minPrice, Double maxPrice, Pageable pageable) {
         return fieldRepository.showFields(fieldType, fieldStatus, minPrice, maxPrice, pageable);
     }
+
+    @Override
+    public Field findById(Integer id) {
+        return fieldRepository.findById(id).orElse(null);
+    }
 }
