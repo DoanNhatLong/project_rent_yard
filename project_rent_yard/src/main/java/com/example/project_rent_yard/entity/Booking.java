@@ -2,7 +2,10 @@ package com.example.project_rent_yard.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -12,6 +15,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Where(clause = "is_deleted = 0")
 public class Booking {
 
     @Id
@@ -26,24 +30,26 @@ public class Booking {
     @JoinColumn(name = "field_id", nullable = false)
     private Field field;
 
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime startTime;
-
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
     @Enumerated(EnumType.STRING)
-    private BookingStatus status;
+    private BookingStatus status= BookingStatus.PENDING;
 
     private double depositAmount;
 
     private boolean isDeleted=false;
 
-    private LocalDateTime createdAt;
+    private LocalDate bookingDate;
 
     public enum BookingStatus {
         BOOKED,
         CANCELLED_BY_CUSTOMER,
         CANCELLED_BY_OWNER,
-        COMPLETED
+        COMPLETED,
+        PENDING
     }
 }
 

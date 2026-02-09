@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Danh sách sân</title>
     <th:block th:replace="layout/layout :: library"></th:block>
+    <link rel="stylesheet" th:href="@{/css/yards.css}">
     <style>
         .field-img {
             width: 100%;
@@ -61,14 +62,25 @@
 
     <!-- ===== FIELD LIST (2 sân / row) ===== -->
     <div class="row">
-        <div class="col-md-6 mb-4" th:each="field : ${fields}">
-            <div class="card h-100">
 
+        <div class="col-md-6 mb-4" th:each="field : ${fields}">
+
+            <div class="card h-100 field-card"
+                 th:classappend="${field.status.name() == 'AVAILABLE'} ? 'field-available' : 'field-disabled'">
+
+                <!-- IMAGE -->
                 <img th:src="${field.imageUrl}"
                      class="card-img-top field-img" alt="Sân">
 
-
+                <!-- BODY -->
                 <div class="card-body">
+
+                    <!-- CLICK CHỈ KHI AVAILABLE -->
+                    <a th:if="${field.status.name() == 'AVAILABLE'}"
+                       th:href="@{/clients/rent/{id}(id=${field.id})}"
+                       class="stretched-link text-decoration-none text-dark">
+                    </a>
+
                     <h5 th:text="${field.name}"></h5>
 
                     <p>
@@ -81,37 +93,18 @@
                         <span th:text="${#numbers.formatDecimal(field.price,0,'COMMA',0,'POINT')}"></span> VNĐ
                     </p>
 
-                    <p>
-                        <strong>Trạng thái:</strong>
-
-                        <span th:if="${field.status.name() == 'AVAILABLE'}"
-                              class="badge bg-success">
-                                AVAILABLE
-                        </span>
-
-                        <span th:if="${field.status.name() == 'BOOKED'}"
-                              class="badge bg-primary">
-                                BOOKED
-                        </span>
-
-                        <span th:if="${field.status.name() == 'MAINTENANCE'}"
-                              class="badge bg-secondary">
-        MAINTENANCE
-    </span>
-                    </p>
+                    <span class="badge"
+                          th:classappend="${field.status.name() == 'AVAILABLE'} ? 'bg-success' : 'bg-secondary'"
+                          th:text="${field.status}">
+                </span>
 
                 </div>
-
-                <div class="card-footer text-center">
-                    <a th:href="@{/clients/yards/{id}(id=${field.id})}"
-                       class="btn btn-outline-primary btn-sm">
-                        Xem chi tiết
-                    </a>
-                </div>
-
             </div>
+
         </div>
     </div>
+
+
 
     <!-- ===== EMPTY ===== -->
     <div class="alert alert-warning" th:if="${fields.size() == 0}">

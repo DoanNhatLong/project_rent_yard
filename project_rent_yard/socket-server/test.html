@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Socket.IO Test</title>
+</head>
+<body>
+
+<h3>Socket.IO Test</h3>
+
+<input id="msg" placeholder="Nhập tin nhắn">
+<button onclick="send()">Gửi</button>
+
+<ul id="log"></ul>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+  const socket = io('http://localhost:3000');
+
+  socket.on('connect', () => {
+    addLog('Connected: ' + socket.id);
+  });
+
+  socket.on('message', (data) => {
+    addLog('Server: ' + data);
+  });
+
+  function send() {
+    const value = document.getElementById('msg').value;
+    socket.emit('message', value);
+  }
+
+  function addLog(text) {
+    const li = document.createElement('li');
+    li.innerText = text;
+    document.getElementById('log').appendChild(li);
+  }
+</script>
+
+</body>
+</html>

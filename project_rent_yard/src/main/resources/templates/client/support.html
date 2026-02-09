@@ -5,9 +5,6 @@
     <title>Hỗ trợ trực tuyến</title>
     <th:block th:replace="layout/layout :: library"></th:block>
 
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
-
     <style>
         #chat-box {
             border: 1px solid #ccc;
@@ -42,6 +39,15 @@
         .admin-bubble {
             background: #e9ecef;
         }
+
+        .ack {
+            font-size: 12px;
+            font-style: italic;
+            color: #666;
+            text-align: right;
+            margin-bottom: 8px;
+        }
+
     </style>
 </head>
 
@@ -51,12 +57,10 @@
 
     <h4>💬 Hỗ trợ trực tuyến</h4>
 
-    <!-- CHAT BOX -->
     <div id="chat-box"
          th:data-user-id="${session.user.id}">
     </div>
 
-    <!-- INPUT -->
     <div class="input-group mt-3">
         <input id="message" type="text" class="form-control"
                placeholder="Nhập tin nhắn...">
@@ -65,48 +69,50 @@
 
 </div>
 
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
 <script>
-    // ===== SETUP =====
-    let socket = new SockJS('/ws');
-    let stompClient = Stomp.over(socket);
+    const socket = io("http://localhost:3000");
+    let lastAckEl = null;
+    socket.on("message", (msg) => {
+        lastAckEl = null;
 
-    let userId = document.getElementById("chat-box").dataset.userId;
-
-    stompClient.connect({}, function () {
-
-        // User nhận tin nhắn của riêng mình
-        stompClient.subscribe('/topic/chat.user.' + userId, function (msg) {
-            let message = JSON.parse(msg.body);
-            showMessage(message);
+        showMessage({
+            senderRole: "ADMIN",
+            content: msg
         });
-
     });
 
-    // ===== SEND MESSAGE =====
+
     function sendMessage() {
         let input = document.getElementById("message");
         let content = input.value.trim();
+        if (!content) return;
 
-        if (content === "") return;
-
-        // 1️⃣ HIỂN THỊ NGAY TRÊN UI
         showMessage({
             senderRole: "USER",
             content: content
         });
 
-        // 2️⃣ GỬI LÊN SERVER
-        stompClient.send("/app/chat.send", {}, JSON.stringify({
-            senderId: userId,
-            receiverId: 1,
-            senderRole: "USER",
-            content: content
-        }));
-
+        socket.emit("message", content);
         input.value = "";
     }
 
-    // ===== SHOW MESSAGE =====
+    socket.on("ack", () => {
+        if (lastAckEl) return;
+
+        let chatBox = document.getElementById("chat-box");
+        let ack = document.createElement("div");
+        ack.className = "ack";
+        ack.innerText = "đã nhận tin nhắn";
+
+        chatBox.appendChild(ack);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        lastAckEl = ack;
+    });
+
+
+
     function showMessage(message) {
         let chatBox = document.getElementById("chat-box");
 
@@ -125,7 +131,6 @@
 
         wrapper.appendChild(bubble);
         chatBox.appendChild(wrapper);
-
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 </script>

@@ -1,0 +1,22 @@
+.field-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-available {
+    cursor: pointer;
+}
+
+.field-available:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.field-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.field-disabled:hover {
+    transform: none;
+    box-shadow: none;
+}

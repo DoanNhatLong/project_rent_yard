@@ -1,0 +1,78 @@
+<th:block th:fragment="date_time">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const startSelect = document.getElementById("startTime");
+            const endSelect = document.getElementById("endTime");
+            const dateInput = document.getElementById("bookingDate");
+
+            const START = 8;
+            const END = 22;
+
+            function formatDate(date) {
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            }
+
+            function getMinStartHour() {
+                const now = new Date();
+                const todayStr = formatDate(now);
+
+                if (dateInput.value === todayStr) {
+                    return now.getHours() + 1;
+                }
+                return START;
+            }
+
+            function renderStartHours() {
+                startSelect.innerHTML = '<option value="">Giờ bắt đầu</option>';
+                endSelect.innerHTML = '<option value="">Giờ kết thúc</option>';
+
+                const minHour = getMinStartHour();
+
+                for (let h = minHour; h < END; h++) {
+                    if (h < START) continue;
+
+                    const opt = document.createElement("option");
+                    const hh = String(h).padStart(2, '0');
+                    opt.value = `${hh}:00`;
+                    opt.text = `${hh}:00`;
+
+                    startSelect.appendChild(opt);
+                }
+            }
+
+            // render lần đầu
+            renderStartHours();
+
+            // khi đổi ngày → render lại giờ bắt đầu
+            dateInput.addEventListener("change", renderStartHours);
+
+            // khi chọn giờ bắt đầu → render giờ kết thúc
+            startSelect.addEventListener("change", function () {
+                endSelect.innerHTML = '<option value="">Giờ kết thúc</option>';
+
+                const startHour = parseInt(this.value.split(":")[0]);
+                if (isNaN(startHour)) return;
+
+                for (let h = startHour + 1; h <= END; h++) {
+                    const opt = document.createElement("option");
+                    const hh = String(h).padStart(2, '0');
+                    opt.value = `${hh}:00`;
+                    opt.text = `${hh}:00`;
+                    endSelect.appendChild(opt);
+                }
+            });
+
+            // giới hạn ngày
+            const today = new Date();
+            const maxDate = new Date();
+            maxDate.setDate(today.getDate() + 7);
+
+            dateInput.min = formatDate(today);
+            dateInput.max = formatDate(maxDate);
+        });
+    </script>
+</th:block>

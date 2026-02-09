@@ -4,16 +4,93 @@
     <meta charset="UTF-8">
     <title>Home</title>
     <th:block th:replace="layout/layout :: library"></th:block>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
-<style>
-    .main-navbar :hover {
-        color: #dc3545;
-    }
-</style>
 <body>
 <div th:replace="layout/toast :: toast(${message})"></div>
 <div th:replace="layout/navbar:: navbar"></div>
 Home
 <a href="login"> Log out</a>
+
+<div class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Địa điểm đặt sân thể thao hàng đầu tại Đà Nẵng.</h1>
+            <p>Mang đến trải nghiệm đặt sân trực tuyến thuận tiện và linh hoạt cho mọi người.</p>
+        </div>
+    </div>
+</div>
+
+<div class="search-wrapper">
+    <form class="search-form">
+        <select name="fieldType" required>
+            <option value="" disabled selected hidden>Chọn loại sân</option>
+            <option value="Field5">Sân 5</option>
+            <option value="Field7">Sân 7</option>
+        </select>
+        <input type="date" name="bookingDate" id="bookingDate" required>
+        <div class="time-select">
+            <select id="startHour" required>
+                <option value="">Giờ bắt đầu</option>
+            </select>
+
+            <select id="endHour" required>
+                <option value="">Giờ kết thúc</option>
+            </select>
+        </div>
+
+
+        <button type="button">Tìm kiếm ngay</button>
+    </form>
+</div>
+
+
+<script>
+    const startSelect = document.getElementById("startHour");
+    const endSelect = document.getElementById("endHour");
+
+    const START = 8;
+    const END = 22;
+
+    // tạo option giờ bắt đầu
+    for (let h = START; h < END; h++) {
+        const opt = document.createElement("option");
+        opt.value = h;
+        opt.text = `${h}:00`;
+        startSelect.appendChild(opt);
+    }
+
+    // khi chọn giờ bắt đầu → cập nhật giờ kết thúc
+    startSelect.addEventListener("change", function () {
+        endSelect.innerHTML = '<option value="">Giờ kết thúc</option>';
+
+        const startHour = parseInt(this.value);
+        if (isNaN(startHour)) return;
+
+        for (let h = startHour + 1; h <= END; h++) {
+            const opt = document.createElement("option");
+            opt.value = h;
+            opt.text = `${h}:00`;
+            endSelect.appendChild(opt);
+        }
+    });
+
+    const dateInput = document.getElementById("bookingDate");
+
+    const today = new Date();
+    const maxDate = new Date();
+
+    maxDate.setDate(today.getDate() + 7);
+
+    function formatDate(date) {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    dateInput.min = formatDate(today);
+    dateInput.max = formatDate(maxDate);
+</script>
 </body>
 </html>
