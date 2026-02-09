@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface IUserRepository extends JpaRepository<User, Integer> {
     boolean existsByPhone(String phone);
+    User findUserById(Integer id);
 
 }

@@ -36,8 +36,10 @@
                     if (h < START) continue;
 
                     const opt = document.createElement("option");
-                    opt.value = h;
-                    opt.text = `${h}:00`;
+                    const hh = String(h).padStart(2, '0');
+                    opt.value = `${hh}:00`;
+                    opt.text = `${hh}:00`;
+
                     startSelect.appendChild(opt);
                 }
             }
@@ -52,13 +54,14 @@
             startSelect.addEventListener("change", function () {
                 endSelect.innerHTML = '<option value="">Giờ kết thúc</option>';
 
-                const startHour = parseInt(this.value);
+                const startHour = parseInt(this.value.split(":")[0]);
                 if (isNaN(startHour)) return;
 
                 for (let h = startHour + 1; h <= END; h++) {
                     const opt = document.createElement("option");
-                    opt.value = h;
-                    opt.text = `${h}:00`;
+                    const hh = String(h).padStart(2, '0');
+                    opt.value = `${hh}:00`;
+                    opt.text = `${hh}:00`;
                     endSelect.appendChild(opt);
                 }
             });

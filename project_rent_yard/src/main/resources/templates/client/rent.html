@@ -82,12 +82,48 @@
 
         <div class="deposit-box">
             <label>Gía thuê 1 giờ ( VIP giảm 10%) </label>
-
             <input type="text"
                    th:value="${field.price} + ' VNĐ'"
                    readonly>
         </div>
+        <div class="service-box">
+            <h4 class="mb-3">Dịch vụ đi kèm</h4>
 
+            <div th:each="temp : ${service}">
+                <div class="row align-items-center mb-2"
+                     th:if="${temp.name == 'Giày (đôi)' or temp.name == 'Nước thể thao'}">
+
+                    <div class="col-8">
+                        <label class="form-label mb-0"
+                               th:text="${temp.name + ' (' + temp.price + ' VNĐ)'}"></label>
+                    </div>
+
+                    <div class="col-4">
+                        <input type="number"
+                               class="form-control"
+                               min="0"
+                               value="0"
+                               th:name="${temp.id}">
+                    </div>
+                </div>
+
+                <div class="row align-items-center mb-2"
+                     th:if="${temp.name == 'Nhặt bóng' or temp.name == 'Trọng tài'}">
+
+                    <div class="col-8">
+                        <label class="form-label mb-0"
+                               th:text="${temp.name + ' (' + temp.price + ' VNĐ)'}"></label>
+                    </div>
+
+                    <div class="col-4 text-end">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               th:name="@{temp.id}"
+                               value="true">
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <button>Thuê</button>
     </form>

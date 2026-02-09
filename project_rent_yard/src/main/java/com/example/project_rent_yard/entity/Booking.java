@@ -3,8 +3,9 @@ package com.example.project_rent_yard.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -29,8 +30,9 @@ public class Booking {
     @JoinColumn(name = "field_id", nullable = false)
     private Field field;
 
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime startTime;
-
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
     @Enumerated(EnumType.STRING)
@@ -40,7 +42,7 @@ public class Booking {
 
     private boolean isDeleted=false;
 
-    private LocalDateTime bookingDate;
+    private LocalDate bookingDate;
 
     public enum BookingStatus {
         BOOKED,

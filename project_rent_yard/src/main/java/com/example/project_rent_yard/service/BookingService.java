@@ -22,4 +22,9 @@ public class BookingService implements IBookingService {
     public List<Booking> findAll() {
         return bookingRepository.findAll();
     }
+
+    @Override
+    public Booking findBookingById(Integer id) {
+        return bookingRepository.findBookingById(id);
+    }
 }

@@ -7,4 +7,5 @@ import java.util.List;
 public interface IBookingService {
     void save(Booking booking);
     List<Booking> findAll();
+    Booking findBookingById(Integer id);
 }
