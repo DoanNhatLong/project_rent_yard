@@ -1,6 +1,7 @@
 package com.example.project_rent_yard.controller.client;
 
 import com.example.project_rent_yard.dto.BookingDto;
+import com.example.project_rent_yard.dto.SearchDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Field;
 import com.example.project_rent_yard.entity.Service;
@@ -170,9 +171,23 @@ public class ClientController {
         User user=booking.getUser();
         user.setTotalSpent(user.getTotalSpent()+total);
         userService.save(user);
-
-
         return "redirect:/clients";
+    }
+
+    @PostMapping("/findField")
+    public String findField(
+            @ModelAttribute SearchDto searchDto
+            ){
+        List<Integer> list= bookingService.searchBusyField(searchDto);
+        System.out.println(list);
+        return "/client/find";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String goDetail(@PathVariable Integer id, Model model){
+        Field field=fieldService.findById( id);
+        model.addAttribute("field",field);
+        return "/client/detail";
     }
 
 }
