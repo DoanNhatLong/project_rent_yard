@@ -18,7 +18,7 @@ public class VnPayService implements IVnPayService {
     private static final String VNP_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     private static final String TMN_CODE = "9MO7DQLD";
     private static final String HASH_SECRET = "4FRP791QYFLRTKSQL89QQ26136RGGNHD";
-    private static final String RETURN_URL = "http://rentyard.local/vnpay-return";
+    private static final String RETURN_URL = "http://localhost:8080/clients/vnpay-return";
 
     @Override
     public String createVnPayUrl(Integer bookingId, double amount) {

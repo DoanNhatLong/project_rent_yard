@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lease</title>
+    <th:block th:replace="layout/layout :: library"></th:block>
+</head>
+<body>
+
+<div th:replace="layout/navbar :: navbar"></div>
+
+<form th:action="@{/clients/lease_checkout}" method="get">
+    <input type="hidden" name="fieldId" th:value="${field.id}">
+    <div class="container mt-4">
+
+        <!-- FIELD INFO -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title mb-2" th:text="${field.name}"></h4>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Mã sân:</strong>
+                        <span th:text="${field.id}"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Giá / giờ:</strong>
+                        <span th:text="${#numbers.formatDecimal(field.price,0,'COMMA',0,'POINT')}"></span> đ
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Số khung giờ:</strong>
+                        <span th:text="${session.bookingDto.size()}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <!-- LEFT: BOOKED SLOTS -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        Khung giờ đã chọn
+                    </div>
+                    <div class="card-body">
+
+                        <div th:each="b : ${session.bookingDto}"
+                             class="d-flex justify-content-between align-items-center border rounded px-3 py-2 mb-2">
+
+                        <span>
+                            <i class="bi bi-clock"></i>
+                            <strong th:text="${b.bookingDate}"></strong>
+                        </span>
+
+                            <span class="badge bg-success">
+                            <span th:text="${b.startTime}"></span>
+                            -
+                            <span th:text="${b.endTime}"></span>
+                        </span>
+                        </div>
+
+                        <div th:if="${session.bookingDto.isEmpty()}"
+                             class="text-muted text-center">
+                            Chưa chọn khung giờ nào
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: SERVICES -->
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        Dịch vụ đi kèm
+                    </div>
+                    <div class="card-body">
+
+                        <div th:each="temp : ${service}">
+
+                            <!-- QUANTITY SERVICES -->
+                            <div class="row align-items-center mb-3"
+                                 th:if="${temp.name == 'Giày (đôi)' or temp.name == 'Nước thể thao'}">
+
+                                <div class="col-7">
+                                    <span th:text="${temp.name}"></span>
+                                    <small class="text-muted">
+                                        (<span th:text="${temp.price}"></span> đ)
+                                    </small>
+                                </div>
+
+                                <div class="col-5">
+                                    <input type="number"
+                                           class="form-control"
+                                           min="0"
+                                           value="0"
+                                           th:name="${temp.id}">
+                                </div>
+                            </div>
+
+                            <!-- CHECKBOX SERVICES -->
+                            <div class="row align-items-center mb-3"
+                                 th:if="${temp.name == 'Nhặt bóng' or temp.name == 'Trọng tài'}">
+
+                                <div class="col-8">
+                                    <span th:text="${temp.name}"></span>
+                                    <small class="text-muted">
+                                        (<span th:text="${temp.price}"></span> đ)
+                                    </small>
+                                </div>
+
+                                <div class="col-4 text-end">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           th:name="${temp.id}"
+                                           value="true">
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ACTION -->
+        <div class="text-end mt-4">
+            <button type="submit" class="btn btn-success btn-lg px-5">
+                Xác nhận thuê
+            </button>
+        </div>
+
+    </div>
+</form>
+
+
+
+</body>
+</html>

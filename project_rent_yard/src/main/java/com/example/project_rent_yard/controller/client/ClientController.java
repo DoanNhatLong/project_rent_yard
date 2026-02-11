@@ -17,11 +17,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalTime;
+import java.util.*;
 
 @RequestMapping("/clients")
 @Controller
@@ -74,14 +74,7 @@ public class ClientController {
         return "/client/support";
     }
 
-    @GetMapping("/rent")
-    public String goRent(@RequestParam("fieldId") Integer id, Model model) {
-        Field field = fieldService.findById(id);
-        model.addAttribute("field", field);
-        List<Service> list = serviceService.findAll();
-        model.addAttribute("service", list);
-        return "/client/rent";
-    }
+
 
     @PostMapping("/rent")
     public String rent(
@@ -165,7 +158,8 @@ public class ClientController {
     @GetMapping("/vnpay-return")
     public String vnPayReturn(
             @RequestParam(required = false) Integer vnp_TxnRef,
-            @RequestParam(required = false) Long vnp_Amount
+            @RequestParam(required = false) Long vnp_Amount,
+            RedirectAttributes redirectAttributes
     ) {
         double total = (double) vnp_Amount / 100;
         Booking booking = bookingService.findBookingById(vnp_TxnRef);
@@ -175,6 +169,7 @@ public class ClientController {
         User user = booking.getUser();
         user.setTotalSpent(user.getTotalSpent() + total);
         userService.save(user);
+        redirectAttributes.addFlashAttribute("mess", "Thuê sân thành công");
         return "redirect:/clients";
     }
 
@@ -185,8 +180,11 @@ public class ClientController {
             HttpSession session
     ) {
         List<Integer> list = bookingService.searchBusyField(searchDto);
+        System.out.println(list.size());
         List<Field> fieldList = fieldService.findAll();
         List<Field> fields = fieldList.stream()
+                .filter(f -> searchDto.getFieldType() == null
+                        || f.getFieldType() == searchDto.getFieldType())
                 .filter(f -> !list.contains(f.getId()))
                 .filter(f->f.getStatus()== Field.FieldStatus.AVAILABLE)
                 .toList();
@@ -210,6 +208,114 @@ public class ClientController {
     private String goBooking(@RequestParam ("fieldId") Integer fieldId){
         System.out.println("field");
         return "/client/booking";
+    }
+
+    @GetMapping("rent")
+    public String goRent(@RequestParam("fieldId") Integer id, Model model) {
+        Field field = fieldService.findById(id);
+        model.addAttribute("field", field);
+        List<Service> list = serviceService.findAll();
+        model.addAttribute("service", list);
+        return "/client/rent";
+    }
+
+    @GetMapping("/lease")
+    public String goRent(
+            @RequestParam("fieldId") Integer id,
+            @RequestParam("selectedSlots") String slot,
+            HttpSession session,
+            Model model
+    ) {
+        Field field = fieldService.findById(id);
+        model.addAttribute("field", field);
+        LocalDate bookingDate = LocalDate.now();
+
+        List<BookingDto> bookingDto = Arrays.stream(slot.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(timeStr -> {
+
+                    LocalTime start = LocalTime.parse(timeStr);
+                    LocalTime end = start.plusHours(1);
+
+                    return new BookingDto(
+                            bookingDate,
+                            start,
+                            end
+                    );
+                })
+                .toList();
+        System.out.println(bookingDto.size());
+        session.setAttribute("bookingDto", bookingDto);
+        List<Service> list = serviceService.findAll();
+        model.addAttribute("service", list);
+        return "/client/lease";
+    }
+
+    @GetMapping("/lease_checkout")
+    public String goLeaseCheckout(
+            @RequestParam ("fieldId") Integer fieldId,
+            HttpSession session,
+            Model model,
+            HttpServletRequest request
+    ) {
+        List<BookingDto> bookingDto = (List<BookingDto>) session.getAttribute("bookingDto");
+        if (bookingDto == null) {
+            return "redirect:/clients";
+        }
+        Map<Integer, Integer> serviceMap = new HashMap<>();
+        request.getParameterMap().forEach((key, values) -> {
+            try {
+                Integer serviceId = Integer.parseInt(key);
+                String value = values[0];
+
+                if ("true".equals(value)) {
+                    serviceMap.put(serviceId, 1);
+                } else {
+                    int quantity = Integer.parseInt(value);
+                    if (quantity > 0) {
+                        serviceMap.put(serviceId, quantity);
+                    }
+                }
+            } catch (NumberFormatException ignored) {}
+        });
+
+        session.setAttribute("SERVICE_MAP", serviceMap);
+        model.addAttribute("bookingDto", bookingDto);
+        Field field = fieldService.findById(fieldId);
+
+        int totalHours = bookingDto.size();
+        double fieldCost = field.getPrice() * totalHours;
+
+        double serviceCost = 0;
+
+        for (Map.Entry<Integer, Integer> entry : serviceMap.entrySet()) {
+            Integer serviceId = entry.getKey();
+            Integer quantity = entry.getValue();
+
+            Service service = serviceService.findById(serviceId);
+            serviceCost += service.getPrice() * quantity;
+        }
+
+        double totalCost = fieldCost + serviceCost;
+        System.out.println(totalCost);
+        model.addAttribute("totalCost",totalCost);
+        User user= (User) session.getAttribute("user");
+        Booking firstBooking=null;
+        for (BookingDto dto : bookingDto) {
+            Booking booking = new Booking();
+            booking.setUser(user);
+            booking.setField(field);
+            booking.setStartTime(dto.getStartTime());
+            booking.setEndTime(dto.getEndTime());
+            booking.setBookingDate(dto.getBookingDate());
+            bookingService.save(booking);
+            if (firstBooking==null){
+                firstBooking=booking;
+            }
+        }
+        String vnPayUrl = vnPayService.createVnPayUrl(firstBooking.getId(), totalCost);
+        return "redirect:" + vnPayUrl;
     }
 
 }

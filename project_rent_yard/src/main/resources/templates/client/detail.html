@@ -12,11 +12,10 @@
 
 <div class="container mt-4">
 
-    <form th:action="@{/clients/rent}" method="get">
+    <form th:action="@{/clients/lease}" method="get">
 
         <!-- hidden inputs -->
         <input type="hidden" name="fieldId" th:value="${field.id}">
-        <input type="hidden" name="totalHours" id="totalHours" value="0">
         <input type="hidden" name="selectedSlots" id="selectedSlots">
 
         <!-- ROW: FIELD + SLOTS -->
@@ -94,7 +93,6 @@
 <!-- SLOT SCRIPT -->
 <script>
     const slotButtons = document.querySelectorAll('.slot-btn');
-    const totalHoursInput = document.getElementById('totalHours');
     const selectedSlotsInput = document.getElementById('selectedSlots');
     const rentBtn = document.getElementById('rentBtn');
 
@@ -108,7 +106,6 @@
             const time = btn.getAttribute('data-time');
 
             if (isSelected) {
-                // bỏ chọn
                 btn.classList.remove('btn-success');
                 btn.classList.add('btn-outline-success');
                 btn.setAttribute('data-selected', 'false');
@@ -117,7 +114,6 @@
                 selectedSlots = selectedSlots.filter(t => t !== time);
 
             } else {
-                // chọn
                 btn.classList.remove('btn-outline-success');
                 btn.classList.add('btn-success');
                 btn.setAttribute('data-selected', 'true');
@@ -126,7 +122,6 @@
                 selectedSlots.push(time);
             }
 
-            totalHoursInput.value = selectedCount;
             selectedSlotsInput.value = selectedSlots.join(",");
             rentBtn.disabled = selectedCount === 0;
         });

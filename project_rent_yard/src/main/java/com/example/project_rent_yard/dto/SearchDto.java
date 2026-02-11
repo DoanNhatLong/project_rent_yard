@@ -1,5 +1,6 @@
 package com.example.project_rent_yard.dto;
 
+import com.example.project_rent_yard.entity.Field;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchDto {
-    private String fieldType;
+    private Field.FieldType fieldType;
     private LocalDate bookingDate;
 
     @DateTimeFormat(pattern = "HH:mm")
