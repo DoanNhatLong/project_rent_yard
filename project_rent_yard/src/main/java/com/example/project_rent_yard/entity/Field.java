@@ -38,4 +38,13 @@ public class Field {
     public enum FieldStatus {
         AVAILABLE, MAINTENANCE, BOOKED
     }
+
+    @Override
+    public String toString() {
+        return "Field{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", fieldType=" + fieldType +
+                '}';
+    }
 }

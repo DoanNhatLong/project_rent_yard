@@ -22,8 +22,8 @@ Home
 </div>
 
 <div class="search-wrapper">
-    <form class="search-form" th:action="@{/clients/findField}" method="post">
-        <select name="fieldType" >
+    <form id="searchForm" class="search-form" th:action="@{/clients/findField}" method="post">
+        <select name="fieldType">
             <option value="" disabled selected hidden>Chọn loại sân</option>
             <option value="Field5">Sân 5</option>
             <option value="Field7">Sân 7</option>
@@ -38,9 +38,97 @@ Home
                 <option value="">Giờ kết thúc</option>
             </select>
         </div>
-        <button type="submit">Tìm kiếm ngay</button>
+        <button type="submit">Tìm kiếm nhanh</button>
     </form>
 </div>
+<script>
+    document.getElementById("searchForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: "POST",
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                const modalBody = document.getElementById("modalBody");
+
+                // 1️⃣ clear nội dung cũ
+                modalBody.innerHTML = "";
+
+                // 2️⃣ nếu không có kết quả
+                if (data.length === 0) {
+                    modalBody.innerHTML = "<p>Không có sân phù hợp</p>";
+                } else {
+                    // 3️⃣ render từng field
+                    modalBody.innerHTML = `<div class="row" id="fieldRow"></div>`;
+                    const fieldRow = document.getElementById("fieldRow");
+                    data.forEach(field => {
+                        const html = `
+    <div class="col-6 mb-3">
+        <div class="border rounded p-3 h-100">
+            <h5>${field.name}</h5>
+            <p>Loại sân: ${field.fieldType}</p>
+            <p>Giá: ${field.price} VND</p>
+            <button class="btn btn-primary btn-sm btn-book"
+             data-field-id="${field.id}">
+                Đặt sân thần tốc
+            </button>
+        </div>
+    </div>
+`;
+                        fieldRow.innerHTML += html;
+                    });
+                }
+
+                // 4️⃣ show modal
+                const modal = new bootstrap.Modal(
+                    document.getElementById("resultModal")
+                );
+                modal.show();
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Có lỗi xảy ra");
+            });
+    });
+</script>
+
 <div th:replace="layout/date_time_sc:: date_time"></div>
+
+<div class="modal fade" id="resultModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Kết quả tìm kiếm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                <!-- data từ controller sẽ vào đây -->
+                Đang tải dữ liệu...
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById("modalBody")
+        .addEventListener("click", function (e) {
+
+            if (e.target.classList.contains("btn-book")) {
+                const fieldId = e.target.dataset.fieldId;
+
+                window.location.href =
+                    `/clients/rent?fieldId=${fieldId}`;
+            }
+        });
+</script>
 </body>
 </html>

@@ -4,6 +4,7 @@ import com.example.project_rent_yard.dto.UserDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IUserService {
@@ -12,4 +13,5 @@ public interface IUserService {
     boolean existsByPhone(String phone);
     User findUserById(Integer id);
     void save(User user);
+
 }

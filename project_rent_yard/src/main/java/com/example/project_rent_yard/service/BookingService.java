@@ -7,6 +7,7 @@ import com.example.project_rent_yard.specification.BookingSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -38,5 +39,10 @@ public class BookingService implements IBookingService {
                 .distinct()
                 .toList()
                 ;
+    }
+
+    @Override
+    public List<Booking> findBookingsByBookingDateAndFieldId(LocalDate bookingDate, Integer field_id) {
+        return bookingRepository.findBookingsByBookingDateAndFieldId(bookingDate,field_id);
     }
 }

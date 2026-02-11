@@ -2,6 +2,7 @@ package com.example.project_rent_yard.controller.client;
 
 import com.example.project_rent_yard.dto.BookingDto;
 import com.example.project_rent_yard.dto.SearchDto;
+import com.example.project_rent_yard.dto.TimeSlotDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Field;
 import com.example.project_rent_yard.entity.Service;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,8 @@ public class ClientController {
     private IVnPayService vnPayService;
     @Autowired
     private IUserService userService;
+    @Autowired
+    private ITimeSlotDtoService timeSlotDtoService;
 
     @ModelAttribute("fields")
     public Page<Field> getFieldList(Pageable pageable) {
@@ -70,8 +74,8 @@ public class ClientController {
         return "/client/support";
     }
 
-    @GetMapping("/rent/{id}")
-    public String goRent(@PathVariable Integer id, Model model) {
+    @GetMapping("/rent")
+    public String goRent(@RequestParam("fieldId") Integer id, Model model) {
         Field field = fieldService.findById(id);
         model.addAttribute("field", field);
         List<Service> list = serviceService.findAll();
@@ -129,7 +133,7 @@ public class ClientController {
             return "redirect:/clients";
         }
         int hour = booking.getEndTime().getHour() - booking.getStartTime().getHour();
-        double fieldCost = booking.getField().getPrice()*hour;
+        double fieldCost = booking.getField().getPrice() * hour;
         List<Service> serviceList = serviceService.findAllById(cart.keySet());
         double serviceCost = 0;
         for (Service s : serviceList) {
@@ -150,11 +154,11 @@ public class ClientController {
     }
 
     @GetMapping("/checkout/pay")
-    public String pay(HttpSession session){
+    public String pay(HttpSession session) {
         Booking booking = (Booking) session.getAttribute("BOOKING");
         Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("SERVICE_MAP");
         Double total = (Double) session.getAttribute("total");
-        String vnPayUrl=vnPayService.createVnPayUrl(booking.getId(), total);
+        String vnPayUrl = vnPayService.createVnPayUrl(booking.getId(), total);
         return "redirect:" + vnPayUrl;
     }
 
@@ -163,31 +167,49 @@ public class ClientController {
             @RequestParam(required = false) Integer vnp_TxnRef,
             @RequestParam(required = false) Long vnp_Amount
     ) {
-        double total= (double) vnp_Amount /100;
-        Booking booking= bookingService.findBookingById(vnp_TxnRef);
+        double total = (double) vnp_Amount / 100;
+        Booking booking = bookingService.findBookingById(vnp_TxnRef);
         booking.setStatus(Booking.BookingStatus.COMPLETED);
         booking.setDepositAmount(total);
         bookingService.save(booking);
-        User user=booking.getUser();
-        user.setTotalSpent(user.getTotalSpent()+total);
+        User user = booking.getUser();
+        user.setTotalSpent(user.getTotalSpent() + total);
         userService.save(user);
         return "redirect:/clients";
     }
 
     @PostMapping("/findField")
-    public String findField(
-            @ModelAttribute SearchDto searchDto
-            ){
-        List<Integer> list= bookingService.searchBusyField(searchDto);
-        System.out.println(list);
-        return "/client/find";
+    @ResponseBody
+    public List<Field> findField(
+            @ModelAttribute SearchDto searchDto,
+            HttpSession session
+    ) {
+        List<Integer> list = bookingService.searchBusyField(searchDto);
+        List<Field> fieldList = fieldService.findAll();
+        List<Field> fields = fieldList.stream()
+                .filter(f -> !list.contains(f.getId()))
+                .filter(f->f.getStatus()== Field.FieldStatus.AVAILABLE)
+                .toList();
+        session.setAttribute("DATA_SEARCH",searchDto);
+        return fields;
     }
 
     @GetMapping("/detail/{id}")
-    public String goDetail(@PathVariable Integer id, Model model){
-        Field field=fieldService.findById( id);
-        model.addAttribute("field",field);
+    public String goDetail(@PathVariable Integer id, Model model) {
+        Field field = fieldService.findById(id);
+        LocalDate localDate = LocalDate.now();
+        List<Booking> bookingList = bookingService.findBookingsByBookingDateAndFieldId(localDate, id);
+        List<TimeSlotDto> slots = timeSlotDtoService.buildSlots(bookingList);
+        System.out.println(bookingList.size());
+        model.addAttribute("slots", slots);
+        model.addAttribute("field", field);
         return "/client/detail";
+    }
+
+    @GetMapping("/booking")
+    private String goBooking(@RequestParam ("fieldId") Integer fieldId){
+        System.out.println("field");
+        return "/client/booking";
     }
 
 }
