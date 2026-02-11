@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <th:block th:replace="layout/layout :: library"></th:block>
+<body>
 <th:block th:fragment="navbar">
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom main-navbar">
         <div class="container-fluid px-4">
@@ -37,7 +44,6 @@
 
             <!-- RIGHT -->
             <ul class="navbar-nav ms-auto align-items-center">
-
                 <li class="nav-item me-3">
                     <a class="nav-link fw-semibold" href="/clients/yards">
                         🏟️️ Sân tập
@@ -86,10 +92,10 @@
                         👤
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Tài khoản</a></li>
+                        <li><a th:href="@{/userInfo}" class="dropdown-item" >Tài khoản</a></li>
                         <li><a class="dropdown-item" href="#">Đổi mật khẩu</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/logout">Đăng xuất</a></li>
+                        <li><a class="dropdown-item text-danger" href="/login">Đăng xuất</a></li>
                     </ul>
                 </li>
 
@@ -99,3 +105,4 @@
 
 
 </th:block>
+</body>

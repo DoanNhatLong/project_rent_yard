@@ -14,4 +14,6 @@ public interface IBookingRepository extends JpaRepository<Booking,Integer>, JpaS
     Booking findBookingById(Integer id);
     List<Booking> findBookingsByBookingDateAndFieldId(LocalDate bookingDate, Integer field_id);
 
+    List<Booking> findBookingsByUser_Id(Integer userId);
+
 }

@@ -45,4 +45,9 @@ public class BookingService implements IBookingService {
     public List<Booking> findBookingsByBookingDateAndFieldId(LocalDate bookingDate, Integer field_id) {
         return bookingRepository.findBookingsByBookingDateAndFieldId(bookingDate,field_id);
     }
+
+    @Override
+    public List<Booking> findBookingsByUser_Id(Integer userId) {
+        return bookingRepository.findBookingsByUser_Id(userId);
+    }
 }
