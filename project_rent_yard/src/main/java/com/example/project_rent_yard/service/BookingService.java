@@ -6,6 +6,9 @@ import com.example.project_rent_yard.repository.IBookingRepository;
 import com.example.project_rent_yard.specification.BookingSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.List;
 public class BookingService implements IBookingService {
     @Autowired
     IBookingRepository bookingRepository;
+    @Autowired
+    ExtraService extraService;
 
 
     @Override
@@ -50,4 +55,23 @@ public class BookingService implements IBookingService {
     public List<Booking> findBookingsByUser_Id(Integer userId) {
         return bookingRepository.findBookingsByUser_Id(userId);
     }
+
+    @Transactional
+    public void markCompleted(Integer bookingId) {
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow();
+
+        booking.setStatus(Booking.BookingStatus.COMPLETED);
+
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        extraService.createSomething(bookingId);
+                    }
+                }
+        );
+    }
+
 }

@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -43,6 +44,15 @@ public class ClientController {
     public Page<Field> getFieldList(Pageable pageable) {
         return fieldService.findAll(pageable);
     }
+
+    @ModelAttribute
+    public void addUserToSession(HttpSession session, Principal principal) {
+        if (principal != null && session.getAttribute("user") == null) {
+            User user = userService.findByName(principal.getName());
+            session.setAttribute("user", user);
+        }
+    }
+
 
     @GetMapping("")
     public String home() {
@@ -163,8 +173,8 @@ public class ClientController {
     ) {
         double total = (double) vnp_Amount / 100;
         Booking booking = bookingService.findBookingById(vnp_TxnRef);
-        booking.setStatus(Booking.BookingStatus.COMPLETED);
         booking.setDepositAmount(total);
+        booking.setStatus(Booking.BookingStatus.COMPLETED);
         bookingService.save(booking);
         User user = booking.getUser();
         user.setTotalSpent(user.getTotalSpent() + total);

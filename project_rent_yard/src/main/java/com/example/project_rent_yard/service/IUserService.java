@@ -13,5 +13,7 @@ public interface IUserService {
     boolean existsByPhone(String phone);
     User findUserById(Integer id);
     void save(User user);
+    List<User> findAllByRole_Name(String roleName);
 
+    User findByName(String name);
 }

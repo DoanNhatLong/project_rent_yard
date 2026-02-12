@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(content, pageTitle)">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Admin</title>
+
+    <th:block th:replace="layout/layout :: library"></th:block>
+
+    <style>
+        body { overflow-x: hidden; }
+
+        .sidebar {
+            height: 100vh;
+            background-color: #212529;
+        }
+
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 12px 20px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: #343a40;
+        }
+
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-2 sidebar">
+            <h4 class="text-white text-center py-3">Admin</h4>
+
+            <a th:href="@{/admins}">Dashboard</a>
+            <a th:href="@{/admins/chat}">Chat</a>
+            <a th:href="@{/admins/booking}">Booking</a>
+            <a th:href="@{/admins/yard}">Yard</a>
+            <a th:href="@{/admins/user}">User</a>
+        </div>
+
+        <!-- Content -->
+        <div class="col-10 content">
+            <div th:insert="${content}"></div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
