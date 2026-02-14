@@ -2,9 +2,11 @@ package com.example.project_rent_yard.service;
 
 import com.example.project_rent_yard.dto.SearchDto;
 import com.example.project_rent_yard.entity.Booking;
+import com.example.project_rent_yard.exception.BookingConflictException;
 import com.example.project_rent_yard.repository.IBookingRepository;
 import com.example.project_rent_yard.specification.BookingSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -54,6 +56,24 @@ public class BookingService implements IBookingService {
     @Override
     public List<Booking> findBookingsByUser_Id(Integer userId) {
         return bookingRepository.findBookingsByUser_Id(userId);
+    }
+
+    @Transactional
+    @Override
+    public void createBooking(Booking booking) {
+        try {
+            bookingRepository.save(booking);
+        } catch (DataIntegrityViolationException e) {
+            throw new BookingConflictException(
+                    "Khung giờ này đã có người đặt."
+            );
+        }
+    }
+
+    @Transactional
+    @Override
+    public void updateBooking(Booking booking) {
+        bookingRepository.save(booking);
     }
 
     @Transactional

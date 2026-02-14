@@ -75,7 +75,7 @@
             <td>Loại sân</td>
             <td>Trạng thái</td>
             <td>Giá</td>
-            <td>Giờ trống </td>
+            <td>Giờ trống</td>
             <td>Hành động</td>
         </tr>
         </thead>
@@ -86,7 +86,10 @@
             <td th:text="${field.status}"></td>
             <td th:text="${field.price}"></td>
             <td>
-                <div class="d-flex flex-wrap gap-1">
+
+                <div th:if="${field.status.name() == 'AVAILABLE'}"
+                     class="d-flex flex-wrap gap-1">
+
                     <a th:each="slot : ${slotMap[field.id]}"
                        th:if="${slot.available}"
                        class="btn btn-sm btn-success book-slot"
@@ -94,7 +97,20 @@
                        th:data-start="${slot.startTime}"
                        th:text="${slot.startTime.minusHours(1)}">
                     </a>
+
                 </div>
+
+                <span th:if="${field.status.name() == 'BOOKED'}"
+                      class="badge bg-danger fs-6">
+                    ⛔ Đã full
+                </span>
+
+
+                <span th:if="${field.status.name() == 'MAINTENANCE'}"
+                      class="badge bg-warning text-dark fs-6">
+                    🔧 Đang bảo trì
+                </span>
+
             </td>
 
             <td>

@@ -115,6 +115,8 @@ public class AdminController {
         booking.setStartTime(startTime);
         booking.setEndTime(startTime.plusHours(1));
         booking.setBookingDate(LocalDate.now());
+        booking.setStatus(Booking.BookingStatus.COMPLETED);
+        booking.setDepositAmount(field.getPrice());
         bookingService.save(booking);
         return ResponseEntity.ok(Map.of(
                 "success", true,

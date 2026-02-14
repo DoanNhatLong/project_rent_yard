@@ -51,6 +51,9 @@ public class ClientController {
             User user = userService.findByName(principal.getName());
             session.setAttribute("user", user);
         }
+
+//        User user = userService.findUserById(2);
+//        session.setAttribute("user",user);
     }
 
 
@@ -93,16 +96,16 @@ public class ClientController {
             HttpSession session,
             HttpServletRequest request
     ) {
+        System.out.println("RENT CALLED");
         User user = (User) session.getAttribute("user");
         Field field = fieldService.findById(fieldId);
-        System.out.println(bookingDto);
         Booking booking = new Booking();
         booking.setUser(user);
         booking.setField(field);
         booking.setStartTime(bookingDto.getStartTime());
         booking.setBookingDate(bookingDto.getBookingDate());
         booking.setEndTime(bookingDto.getEndTime());
-        bookingService.save(booking);
+        bookingService.createBooking(booking);
         Map<Integer, Integer> serviceMap = new HashMap<>();
         request.getParameterMap().forEach((key, values) -> {
             try {
@@ -175,7 +178,7 @@ public class ClientController {
         Booking booking = bookingService.findBookingById(vnp_TxnRef);
         booking.setDepositAmount(total);
         booking.setStatus(Booking.BookingStatus.COMPLETED);
-        bookingService.save(booking);
+        bookingService.updateBooking(booking);
         User user = booking.getUser();
         user.setTotalSpent(user.getTotalSpent() + total);
         userService.save(user);
@@ -319,7 +322,7 @@ public class ClientController {
             booking.setStartTime(dto.getStartTime());
             booking.setEndTime(dto.getEndTime());
             booking.setBookingDate(dto.getBookingDate());
-            bookingService.save(booking);
+            bookingService.createBooking(booking);
             if (firstBooking==null){
                 firstBooking=booking;
             }

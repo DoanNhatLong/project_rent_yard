@@ -30,6 +30,15 @@ public class TimeSlotDtoService implements ITimeSlotDtoService {
 
         Set<LocalTime> booked = new HashSet<>();
         for (Booking b : bookings) {
+            if (!b.getStatus().equals(Booking.BookingStatus.PENDING)
+                    && !b.getStatus().equals(Booking.BookingStatus.COMPLETED)) {
+                continue;
+            }
+
+            if (b.getStatus().equals(Booking.BookingStatus.PENDING)
+                    && b.getExpiredAt().isBefore(LocalTime.now())) {
+                continue;
+            }
             LocalTime s = b.getStartTime();
             while (s.isBefore(b.getEndTime())) {
                 booked.add(s);

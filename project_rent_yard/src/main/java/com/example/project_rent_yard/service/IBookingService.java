@@ -14,4 +14,7 @@ public interface IBookingService {
     List<Integer> searchBusyField(SearchDto searchDto);
     List<Booking> findBookingsByBookingDateAndFieldId(LocalDate bookingDate, Integer field_id);
     List<Booking> findBookingsByUser_Id(Integer userId);
+    void createBooking(Booking booking);
+
+    void updateBooking(Booking booking);
 }

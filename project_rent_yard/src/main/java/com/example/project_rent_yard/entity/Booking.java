@@ -9,7 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "booking")
+@Table(name = "booking",
+uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"field_id", "booking_date", "start_time"} )
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,6 +42,8 @@ public class Booking {
     private BookingStatus status= BookingStatus.PENDING;
 
     private double depositAmount;
+
+    private LocalTime expiredAt=LocalTime.now();
 
     private boolean isDeleted=false;
 
