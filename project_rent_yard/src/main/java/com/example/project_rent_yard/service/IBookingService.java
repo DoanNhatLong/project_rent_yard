@@ -1,6 +1,7 @@
 package com.example.project_rent_yard.service;
 
 import com.example.project_rent_yard.dto.SearchDto;
+import com.example.project_rent_yard.dto.ViewBookingDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Field;
 
@@ -15,6 +16,6 @@ public interface IBookingService {
     List<Booking> findBookingsByBookingDateAndFieldId(LocalDate bookingDate, Integer field_id);
     List<Booking> findBookingsByUser_Id(Integer userId);
     void createBooking(Booking booking);
-
     void updateBooking(Booking booking);
+    List<ViewBookingDto> getAll();
 }

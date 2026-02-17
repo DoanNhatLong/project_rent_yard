@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -13,7 +14,7 @@ public class BookingScheduler {
 
     private final IBookingRepository bookingRepository;
 
-    @Scheduled(fixedRate = 60000) // mỗi 60 giây
+    @Scheduled(fixedRate = 600000)
     public void cancelExpiredBookings() {
         bookingRepository.cancelExpired(LocalDateTime.now());
     }

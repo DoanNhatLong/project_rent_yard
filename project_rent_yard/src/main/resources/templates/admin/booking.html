@@ -7,9 +7,45 @@
 
     <div class="card">
         <div class="card-body">
-            Nội dung trang user ở đây.
+            <div th:replace="layout/table :: table(${data}, ${headers}, ${fields})">
+            </div>
         </div>
     </div>
 </section>
+
+<nav>
+    <ul class="pagination">
+
+        <!-- Previous -->
+        <li class="page-item"
+            th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/admins/booking(page=${page.number - 1})}">
+                Previous
+            </a>
+        </li>
+
+        <!-- Số trang -->
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+            th:classappend="${page.number == i} ? 'active'">
+
+            <a class="page-link"
+               th:href="@{/admins/booking(page=${i})}"
+               th:text="${i + 1}">
+            </a>
+        </li>
+
+        <!-- Next -->
+        <li class="page-item"
+            th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/admins/booking(page=${page.number + 1})}">
+                Next
+            </a>
+        </li>
+
+    </ul>
+</nav>
 
 </html>

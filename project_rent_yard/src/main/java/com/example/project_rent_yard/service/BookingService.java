@@ -1,8 +1,10 @@
 package com.example.project_rent_yard.service;
 
 import com.example.project_rent_yard.dto.SearchDto;
+import com.example.project_rent_yard.dto.ViewBookingDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.exception.BookingConflictException;
+import com.example.project_rent_yard.mapper.BookingMapper;
 import com.example.project_rent_yard.repository.IBookingRepository;
 import com.example.project_rent_yard.specification.BookingSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,7 @@ public class BookingService implements IBookingService {
         try {
             bookingRepository.save(booking);
         } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
             throw new BookingConflictException(
                     "Khung giờ này đã có người đặt."
             );
@@ -74,6 +77,13 @@ public class BookingService implements IBookingService {
     @Override
     public void updateBooking(Booking booking) {
         bookingRepository.save(booking);
+    }
+
+    @Override
+    public List<ViewBookingDto> getAll() {
+        return bookingRepository.findAll().stream()
+                .map(BookingMapper::toViewBookingDto)
+                .toList();
     }
 
     @Transactional

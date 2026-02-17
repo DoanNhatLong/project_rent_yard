@@ -95,11 +95,6 @@ public class AdminController {
         return "/client/home";
     }
 
-    @GetMapping("booking")
-    public String goBooking(){
-        return "/admin/booking";
-    }
-
     @PostMapping("/api/book")
     @ResponseBody
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest, HttpSession session){

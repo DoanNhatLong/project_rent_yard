@@ -6,6 +6,7 @@ import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -43,7 +44,7 @@ public class Booking {
 
     private double depositAmount;
 
-    private LocalTime expiredAt=LocalTime.now();
+    private LocalDateTime expiredAt= LocalDateTime.now();
 
     private boolean isDeleted=false;
 

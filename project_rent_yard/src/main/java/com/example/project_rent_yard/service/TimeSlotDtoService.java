@@ -36,7 +36,7 @@ public class TimeSlotDtoService implements ITimeSlotDtoService {
             }
 
             if (b.getStatus().equals(Booking.BookingStatus.PENDING)
-                    && b.getExpiredAt().isBefore(LocalTime.now())) {
+                    && b.getExpiredAt().isBefore(LocalDateTime.now())) {
                 continue;
             }
             LocalTime s = b.getStartTime();
