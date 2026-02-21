@@ -10,6 +10,29 @@
 <div th:replace="layout/toast :: toast(${message})"></div>
 <div th:replace="layout/navbar:: navbar"></div>
 
+<div class="container weather-wrapper py-3 bg-light">
+    <div class="row text-center">
+
+        <div class="col-md-2"
+             th:each="item : ${forecast}">
+
+            <p th:text="${#strings.substring(item.dt_txt,0,10)}"></p>
+
+            <img th:src="'https://openweathermap.org/img/wn/'
+                + ${item.weather[0].icon} + '@2x.png'"
+                 style="width:50px; height:50px;" />
+
+            <p>
+                <span th:text="${item.main.temp_max}"></span>°
+                /
+                <span th:text="${item.main.temp_min}"></span>°
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
 <div class="hero">
     <div class="hero-content">
         <div class="hero-text">

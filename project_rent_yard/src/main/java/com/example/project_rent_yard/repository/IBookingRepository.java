@@ -3,6 +3,8 @@ package com.example.project_rent_yard.repository;
 import com.example.project_rent_yard.dto.ViewBookingDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Field;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -31,5 +33,14 @@ public interface IBookingRepository extends JpaRepository<Booking,Integer>, JpaS
         AND b.expiredAt <= :now
     """)
     void cancelExpired(@Param("now") LocalDateTime now);
+
+    @Query("""
+select b from Booking b
+where (:status is null or b.status = :status)
+and (:userName is null or b.user.name like %:userName%)
+and (:bookingDate is null or b.bookingDate = :bookingDate)
+""")
+    Page<Booking> findAllForAdmin(@Param("status") Booking.BookingStatus status, @Param("userName") String userName,
+                                  @Param("bookingDate") LocalDate bookingDate, Pageable pageable);
 
 }

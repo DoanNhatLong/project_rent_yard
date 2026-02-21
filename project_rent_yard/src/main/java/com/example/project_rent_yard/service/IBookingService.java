@@ -4,6 +4,8 @@ import com.example.project_rent_yard.dto.SearchDto;
 import com.example.project_rent_yard.dto.ViewBookingDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Field;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,5 +19,6 @@ public interface IBookingService {
     List<Booking> findBookingsByUser_Id(Integer userId);
     void createBooking(Booking booking);
     void updateBooking(Booking booking);
-    List<ViewBookingDto> getAll();
+    Page<ViewBookingDto> getAll(Pageable pageable);
+    Page<ViewBookingDto> getAllForAdmin(Pageable pageable, Booking.BookingStatus status, String userName, LocalDate bookingDate);
 }

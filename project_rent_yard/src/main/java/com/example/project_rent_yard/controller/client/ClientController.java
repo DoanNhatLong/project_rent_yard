@@ -1,6 +1,7 @@
 package com.example.project_rent_yard.controller.client;
 
 import com.example.project_rent_yard.dto.BookingDto;
+import com.example.project_rent_yard.dto.ForeCastItem;
 import com.example.project_rent_yard.dto.SearchDto;
 import com.example.project_rent_yard.dto.TimeSlotDto;
 import com.example.project_rent_yard.entity.Booking;
@@ -39,6 +40,8 @@ public class ClientController {
     private IUserService userService;
     @Autowired
     private ITimeSlotDtoService timeSlotDtoService;
+    @Autowired
+    private WeatherService weatherService;
 
     @ModelAttribute("fields")
     public Page<Field> getFieldList(Pageable pageable) {
@@ -58,7 +61,9 @@ public class ClientController {
 
 
     @GetMapping("")
-    public String home() {
+    public String home(Model model) {
+        List<ForeCastItem> forecast = weatherService.getDailyForecast();
+        model.addAttribute("forecast", forecast);
         return "/client/home";
     }
 

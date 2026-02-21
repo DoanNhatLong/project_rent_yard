@@ -60,6 +60,7 @@ public class AdminController {
     public String goUser(Model model){
         List<User> users=userService.findAllByRole_Name("user");
         model.addAttribute("users",users);
+        model.addAttribute("newUser",new User());
         return "/admin/user";
     }
 

@@ -14,6 +14,6 @@ public interface IUserService {
     User findUserById(Integer id);
     void save(User user);
     List<User> findAllByRole_Name(String roleName);
-
     User findByName(String name);
+    User findById(Integer id);
 }

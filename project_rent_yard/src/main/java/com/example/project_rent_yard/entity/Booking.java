@@ -51,11 +51,11 @@ public class Booking {
     private LocalDate bookingDate;
 
     public enum BookingStatus {
+        PENDING,
         BOOKED,
         CANCELLED_BY_CUSTOMER,
         CANCELLED_BY_OWNER,
-        COMPLETED,
-        PENDING
+        COMPLETED
     }
 }
 

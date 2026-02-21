@@ -9,6 +9,8 @@ import com.example.project_rent_yard.repository.IBookingRepository;
 import com.example.project_rent_yard.specification.BookingSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -80,11 +82,17 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public List<ViewBookingDto> getAll() {
-        return bookingRepository.findAll().stream()
-                .map(BookingMapper::toViewBookingDto)
-                .toList();
+    public Page<ViewBookingDto> getAll(Pageable pageable) {
+        return bookingRepository.findAll(pageable)
+                .map(BookingMapper::toViewBookingDto);
     }
+
+    @Override
+    public Page<ViewBookingDto> getAllForAdmin(Pageable pageable, Booking.BookingStatus status, String userName, LocalDate bookingDate) {
+        return bookingRepository.findAllForAdmin(status, userName, bookingDate, pageable)
+                .map(BookingMapper::toViewBookingDto);
+    }
+
 
     @Transactional
     public void markCompleted(Integer bookingId) {
