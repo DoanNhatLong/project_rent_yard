@@ -16,4 +16,5 @@ public interface IUserService {
     List<User> findAllByRole_Name(String roleName);
     User findByName(String name);
     User findById(Integer id);
+    List<User> findAllByRole_NameOrRole_Name(String roleName1, String roleName2);
 }

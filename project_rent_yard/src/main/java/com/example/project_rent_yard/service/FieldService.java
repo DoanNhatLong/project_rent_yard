@@ -34,4 +34,9 @@ public class FieldService implements IFieldService {
     public List<Field> findAll() {
         return fieldRepository.findAll();
     }
+
+    @Override
+    public void save(Field field) {
+        fieldRepository.save(field);
+    }
 }

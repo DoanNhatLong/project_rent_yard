@@ -25,13 +25,16 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers("/owner/**")
+                        .hasAuthority("owner")
+
                         // ADMIN only
                         .requestMatchers("/admins/**")
-                        .hasAuthority("admin")
+                        .hasAnyAuthority("admin", "owner")
 
                         // USER + admin
                         .requestMatchers("/clients/**", "/userInfo/**")
-                        .hasAnyAuthority("user", "admin")
+                        .hasAnyAuthority("user", "admin", "owner")
 
                         // public
                         .requestMatchers("/login", "/css/**", "/js/**", "/images/**")

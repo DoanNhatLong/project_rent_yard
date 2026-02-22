@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="owner/layout :: layout(~{::section}, 'Quản lý Sân')">
+<section>
+    <h3>Quản lý sân </h3>
+
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên sân</th>
+                <th>Loại sân</th>
+                <th>Giá</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="field:${fields}">
+                <td th:text="${field.id}"></td>
+                <td th:text="${field.name}"></td>
+                <td th:text="${field.fieldType}"></td>
+                <td th:text="${field.price}"></td>
+                <td th:text="${field.status.name()}"></td>
+                <td>
+                    <button type="button"
+                            class="btn btn-primary btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#priceModal"
+                            th:attr="data-id=${field.id}, data-name=${field.name}">
+                        Điều chỉnh giá
+                    </button>
+                    <a th:href="@{/owners/yard/status/{id}(id=${field.id})}" class="btn btn-sm btn-danger"
+                    >Đổi trạng thái</a>
+                </td>
+
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <a class="btn btn-primary" th:href="@{/owners/addField}">Thêm mới</a>
+    </div>
+
+    <nav th:if="${fieldPage.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+
+            <!-- Prev -->
+            <li class="page-item" th:classappend="${fieldPage.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/owners/yard(page=${fieldPage.number - 1})}">
+                    &laquo;
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, fieldPage.totalPages - 1)}"
+                th:classappend="${i == fieldPage.number} ? 'active'">
+
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/owners/yard(page=${i})}">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item" th:classappend="${fieldPage.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/owners/yard(page=${fieldPage.number + 1})}">
+                    &raquo;
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+    <div class="modal fade" id="priceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Điều chỉnh giá sân</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form th:action="@{/owners/yard/price}" method="get">
+
+                    <div class="modal-body">
+
+                        <!-- hidden fieldId -->
+                        <input type="hidden" name="fieldId" id="fieldIdInput">
+
+                        <div class="mb-3">
+                            <label class="form-label">Tên sân</label>
+                            <input type="text" class="form-control" id="fieldNameInput" disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Giá mới</label>
+                            <input type="number"
+                                   class="form-control"
+                                   name="price"
+                                   required>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            Lưu
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Hủy
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const priceModal = document.getElementById('priceModal');
+
+        priceModal.addEventListener('show.bs.modal', function (event) {
+
+            const button = event.relatedTarget;
+
+            const fieldId = button.getAttribute('data-id');
+            const fieldName = button.getAttribute('data-name');
+
+            document.getElementById('fieldIdInput').value = fieldId;
+            document.getElementById('fieldNameInput').value = fieldName;
+        });
+    </script>
+</section>
+
