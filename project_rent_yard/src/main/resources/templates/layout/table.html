@@ -1,0 +1,23 @@
+<div th:fragment="table(data, headers, fields)">
+
+  <table class="table table-striped">
+
+    <thead>
+    <tr>
+      <th th:each="h : ${headers}"
+          th:text="${h}">
+      </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="row : ${data}">
+      <td th:each="f : ${fields}"
+          th:text="${row[f]}">
+      </td>
+    </tr>
+    </tbody>
+
+  </table>
+
+</div>

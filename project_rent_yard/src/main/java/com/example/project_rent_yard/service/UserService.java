@@ -44,4 +44,25 @@ public class UserService implements IUserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
+    @Override
+    public List<User> findAllByRole_Name(String roleName) {
+        return userRepository.findAllByRole_Name(roleName);
+    }
+
+    @Override
+    public User findByName(String name) {
+        return userRepository.findByName(name);
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<User> findAllByRole_NameOrRole_Name(String roleName1, String roleName2) {
+        return userRepository.findAllByRole_NameOrRole_Name(roleName1, roleName2);
+    }
+
 }

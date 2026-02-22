@@ -6,10 +6,14 @@ import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "booking")
+@Table(name = "booking",
+uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"field_id", "booking_date", "start_time"} )
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,16 +44,18 @@ public class Booking {
 
     private double depositAmount;
 
+    private LocalDateTime expiredAt= LocalDateTime.now();
+
     private boolean isDeleted=false;
 
     private LocalDate bookingDate;
 
     public enum BookingStatus {
+        PENDING,
         BOOKED,
         CANCELLED_BY_CUSTOMER,
         CANCELLED_BY_OWNER,
-        COMPLETED,
-        PENDING
+        COMPLETED
     }
 }
 

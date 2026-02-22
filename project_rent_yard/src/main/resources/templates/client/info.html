@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Info</title>
+    <th:block th:replace="layout/layout :: library"></th:block>
+    <link rel="stylesheet" href="/css/info.css">
+</head>
+<body>
+<div th:replace="layout/navbar:: navbar"></div>
+
+<div class="container profile-wrapper">
+    <div class="profile-card">
+
+        <h2>Thông tin cá nhân</h2>
+
+        <div class="info-row">
+            <span>Họ tên</span>
+            <strong th:text="${session.user.name}"></strong>
+        </div>
+
+        <div class="info-row">
+            <span>Số điện thoại</span>
+            <strong th:text="${session.user.phone}"></strong>
+        </div>
+
+        <div class="vip-section">
+            <div class="vip-header">
+                <span>Hạng khách hàng</span>
+
+                <span class="vip-badge"
+                      th:if="${session.user.customerType.name() == 'VIP'}">
+                    🌟 VIP
+                </span>
+
+                <span class="normal-badge"
+                      th:if="${session.user.customerType.name() != 'VIP'}">
+                    Thành viên
+                </span>
+            </div>
+
+            <!-- PROGRESS nếu chưa VIP -->
+            <div th:if="${session.user.customerType.name() != 'VIP'}">
+
+                <div class="progress-bar">
+                    <div class="progress-fill"
+                         th:style="'width:' + (${session.user.totalSpent} * 100 / 2000000) + '%'">
+                    </div>
+                </div>
+
+                <div class="vip-text">
+                    Còn
+                    <strong th:text="${2000000 - session.user.totalSpent}"></strong>
+                    ₫ để trở thành VIP
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+
+    <h3 class="mb-4">Lịch sử đặt sân</h3>
+
+    <div class="row g-4" th:each="booking : ${bookings}">
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 booking-card">
+
+                <div class="card-body d-flex flex-column">
+
+                    <h5 class="card-title"
+                        th:text="${booking.field.name}">
+                        Tên sân
+                    </h5>
+                    <p class="text-muted mb-2">
+                        📅
+                        <span th:text="${booking.bookingDate}"></span>
+                    </p>
+
+                    <div class="mt-auto"></div>
+
+                    <a th:href="@{/userInfo/review/{fieldId}(fieldId=${booking.field.id})}"
+                       class="btn btn-outline-primary w-100">
+                        ✍️ Viết Review
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+</body>
+</html>

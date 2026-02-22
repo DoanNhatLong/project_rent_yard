@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail</title>
+    <th:block th:replace="layout/layout :: library"></th:block>
+</head>
+<body>
+
+<div th:replace="layout/toast :: toast(${message})"></div>
+<div th:replace="layout/navbar :: navbar"></div>
+
+<div class="container mt-4">
+
+    <form th:action="@{/clients/lease}" method="get">
+
+        <!-- hidden inputs -->
+        <input type="hidden" name="fieldId" th:value="${field.id}">
+        <input type="hidden" name="selectedSlots" id="selectedSlots">
+
+        <!-- ROW: FIELD + SLOTS -->
+        <div class="row">
+
+            <!-- LEFT: FIELD CARD -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+
+                    <img th:src="${field.imageUrl}"
+                         class="card-img-top"
+                         alt="Field Image"
+                         style="height: 220px; object-fit: cover;">
+
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${field.name}"></h5>
+
+                        <p class="card-text mb-1">
+                            <strong>Loại sân:</strong>
+                            <span th:text="${field.fieldType}"></span>
+                        </p>
+
+                        <p class="card-text mb-1">
+                            <strong>Giá / giờ:</strong>
+                            <span th:text="${#numbers.formatDecimal(field.price,0,'COMMA',0,'POINT')}"></span> đ
+                        </p>
+
+                        <p class="card-text">
+                            <strong>Trạng thái:</strong>
+                            <span class="badge bg-success"
+                                  th:if="${field.status.name() == 'AVAILABLE'}">Hoạt động</span>
+                            <span class="badge bg-warning"
+                                  th:if="${field.status.name() == 'MAINTENANCE'}">Bảo trì</span>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- RIGHT: AVAILABLE SLOTS -->
+            <div class="col-md-8">
+                <h5 class="mb-3">Khung giờ khả dụng</h5>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <button th:each="slot : ${slots}"
+                            th:if="${slot.available}"
+                            type="button"
+                            class="btn btn-outline-success slot-btn"
+                            th:text="${slot.startTime} + ' - ' + ${slot.endTime}"
+                            th:data-time="${slot.startTime}"
+                            data-selected="false">
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RENT BUTTON -->
+        <div class="row mt-4">
+            <div class="col text-end">
+                <button class="btn btn-primary btn-lg"
+                        id="rentBtn"
+                        disabled>
+                    Thuê
+                </button>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<!-- SLOT SCRIPT -->
+<script>
+    const slotButtons = document.querySelectorAll('.slot-btn');
+    const selectedSlotsInput = document.getElementById('selectedSlots');
+    const rentBtn = document.getElementById('rentBtn');
+
+    let selectedCount = 0;
+    let selectedSlots = [];
+
+    slotButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+
+            const isSelected = btn.getAttribute('data-selected') === 'true';
+            const time = btn.getAttribute('data-time');
+
+            if (isSelected) {
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-success');
+                btn.setAttribute('data-selected', 'false');
+
+                selectedCount--;
+                selectedSlots = selectedSlots.filter(t => t !== time);
+
+            } else {
+                btn.classList.remove('btn-outline-success');
+                btn.classList.add('btn-success');
+                btn.setAttribute('data-selected', 'true');
+
+                selectedCount++;
+                selectedSlots.push(time);
+            }
+
+            selectedSlotsInput.value = selectedSlots.join(",");
+            rentBtn.disabled = selectedCount === 0;
+        });
+    });
+</script>
+
+</body>
+</html>

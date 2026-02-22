@@ -8,4 +8,5 @@ import java.util.Set;
 public interface IServiceService {
     List<Service> findAll();
     List<Service> findAllById(Set<Integer> id);
+    Service findById(Integer serviceId);
 }

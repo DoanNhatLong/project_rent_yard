@@ -9,8 +9,27 @@
 <body>
 <div th:replace="layout/toast :: toast(${message})"></div>
 <div th:replace="layout/navbar:: navbar"></div>
-Home
-<a href="login"> Log out</a>
+
+<div class="container weather-wrapper py-3 bg-light">
+    <div class="row text-center">
+
+        <div class="col-md-2"
+             th:each="item : ${forecast}">
+
+            <p th:text="${#strings.substring(item.dt_txt,0,10)}"></p>
+
+            <img th:src="'https://openweathermap.org/img/wn/'
+                + ${item.weather[0].icon} + '@2x.png'"
+                 style="width:50px; height:50px;" />
+
+            <p>
+                <span th:text="${item.main.temp_max}"></span>°
+            </p>
+
+        </div>
+
+    </div>
+</div>
 
 <div class="hero">
     <div class="hero-content">
@@ -22,75 +41,112 @@ Home
 </div>
 
 <div class="search-wrapper">
-    <form class="search-form">
-        <select name="fieldType" required>
+    <form id="searchForm" class="search-form" th:action="@{/clients/findField}" method="post">
+        <select name="fieldType">
             <option value="" disabled selected hidden>Chọn loại sân</option>
             <option value="Field5">Sân 5</option>
             <option value="Field7">Sân 7</option>
         </select>
         <input type="date" name="bookingDate" id="bookingDate" required>
         <div class="time-select">
-            <select id="startHour" required>
+            <select id="startTime" name="startTime">
                 <option value="">Giờ bắt đầu</option>
             </select>
 
-            <select id="endHour" required>
+            <select id="endTime" name="endTime">
                 <option value="">Giờ kết thúc</option>
             </select>
         </div>
-
-
-        <button type="button">Tìm kiếm ngay</button>
+        <button type="submit">Tìm kiếm nhanh</button>
     </form>
+</div>
+<script>
+    document.getElementById("searchForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: "POST",
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                const modalBody = document.getElementById("modalBody");
+
+                // 1️⃣ clear nội dung cũ
+                modalBody.innerHTML = "";
+
+                // 2️⃣ nếu không có kết quả
+                if (data.length === 0) {
+                    modalBody.innerHTML = "<p>Không có sân phù hợp</p>";
+                } else {
+                    // 3️⃣ render từng field
+                    modalBody.innerHTML = `<div class="row" id="fieldRow"></div>`;
+                    const fieldRow = document.getElementById("fieldRow");
+                    data.forEach(field => {
+                        const html = `
+    <div class="col-6 mb-3">
+        <div class="border rounded p-3 h-100">
+            <h5>${field.name}</h5>
+            <p>Loại sân: ${field.fieldType}</p>
+            <p>Giá: ${field.price} VND</p>
+            <button class="btn btn-primary btn-sm btn-book"
+             data-field-id="${field.id}">
+                Đặt sân thần tốc
+            </button>
+        </div>
+    </div>
+`;
+                        fieldRow.innerHTML += html;
+                    });
+                }
+
+                // 4️⃣ show modal
+                const modal = new bootstrap.Modal(
+                    document.getElementById("resultModal")
+                );
+                modal.show();
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Có lỗi xảy ra");
+            });
+    });
+</script>
+
+<div th:replace="layout/date_time_sc:: date_time"></div>
+
+<div class="modal fade" id="resultModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Kết quả tìm kiếm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                Đang tải dữ liệu...
+            </div>
+
+        </div>
+    </div>
 </div>
 
 
 <script>
-    const startSelect = document.getElementById("startHour");
-    const endSelect = document.getElementById("endHour");
+    document.getElementById("modalBody")
+        .addEventListener("click", function (e) {
 
-    const START = 8;
-    const END = 22;
+            if (e.target.classList.contains("btn-book")) {
+                const fieldId = e.target.dataset.fieldId;
 
-    // tạo option giờ bắt đầu
-    for (let h = START; h < END; h++) {
-        const opt = document.createElement("option");
-        opt.value = h;
-        opt.text = `${h}:00`;
-        startSelect.appendChild(opt);
-    }
-
-    // khi chọn giờ bắt đầu → cập nhật giờ kết thúc
-    startSelect.addEventListener("change", function () {
-        endSelect.innerHTML = '<option value="">Giờ kết thúc</option>';
-
-        const startHour = parseInt(this.value);
-        if (isNaN(startHour)) return;
-
-        for (let h = startHour + 1; h <= END; h++) {
-            const opt = document.createElement("option");
-            opt.value = h;
-            opt.text = `${h}:00`;
-            endSelect.appendChild(opt);
-        }
-    });
-
-    const dateInput = document.getElementById("bookingDate");
-
-    const today = new Date();
-    const maxDate = new Date();
-
-    maxDate.setDate(today.getDate() + 7);
-
-    function formatDate(date) {
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-    }
-
-    dateInput.min = formatDate(today);
-    dateInput.max = formatDate(maxDate);
+                window.location.href =
+                    `/clients/rent?fieldId=${fieldId}`;
+            }
+        });
 </script>
 </body>
 </html>

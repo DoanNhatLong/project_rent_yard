@@ -29,4 +29,14 @@ public class FieldService implements IFieldService {
     public Field findById(Integer id) {
         return fieldRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public List<Field> findAll() {
+        return fieldRepository.findAll();
+    }
+
+    @Override
+    public void save(Field field) {
+        fieldRepository.save(field);
+    }
 }

@@ -27,12 +27,12 @@ public class User {
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    private CustomerType customerType;
+    private CustomerType customerType=CustomerType.NORMAL;
 
-    private double totalSpent;
+    private double totalSpent=0;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status=Status.ACTIVE;
 
     private boolean isDeleted=false;
 

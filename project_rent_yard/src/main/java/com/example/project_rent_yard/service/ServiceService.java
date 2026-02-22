@@ -21,4 +21,9 @@ public class ServiceService implements IServiceService {
     public List<Service> findAllById(Set<Integer> id) {
         return serviceRepository.findAllById(id);
     }
+
+    @Override
+    public Service findById(Integer serviceId) {
+        return serviceRepository.findById(serviceId).orElse(null);
+    }
 }

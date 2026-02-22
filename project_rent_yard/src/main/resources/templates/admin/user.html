@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="admin/layout :: layout(~{::section}, 'Quản lý User')">
+
+<section>
+    <h3 class="mb-4">Quản lý User</h3>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+
+                    <thead class="table-dark">
+                    <tr class="text-center">
+                        <th>ID</th>
+                        <th class="text-start">Name</th>
+                        <th>Phone</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th style="width: 180px;">Action</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td class="text-center fw-bold" th:text="${user.id}"></td>
+
+                        <td th:text="${user.name}"></td>
+
+                        <td class="text-center" th:text="${user.phone}"></td>
+
+                        <!-- Customer Type -->
+                        <td class="text-center">
+                            <span class="badge"
+                                  th:classappend="${user.customerType != null and user.customerType.name() == 'VIP'}
+                      ? ' bg-warning text-dark'
+                      : ' bg-secondary'"
+                                  th:text="${user.customerType}">
+</span>
+                        </td>
+
+                        <!-- Status -->
+                        <td class="text-center">
+                            <span class="badge"
+                                  th:classappend="${user.status != null and user.status.name() == 'ACTIVE'}
+                      ? ' bg-success'
+                      : ' bg-danger'"
+                                  th:text="${user.status}">
+</span>
+                        </td>
+
+                        <!-- Action -->
+                        <td class="text-center">
+                            <a class="btn btn-sm btn-outline-primary me-2">
+                                Detail
+                            </a>
+
+                            <a th:href="@{/admins/user/block/{id}(id=${user.id})}"
+                               class="btn btn-sm btn-outline-danger"
+                               th:text="${user.status.name() == 'ACTIVE' ? 'Block' : 'Unblock'}">
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <button class="btn btn-success"
+                data-bs-toggle="modal"
+                data-bs-target="#addUserModal">
+            Thêm mới
+        </button>
+    </div>
+
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/admins/user/create}"
+                      th:object="${newUser}"
+                      method="post">
+
+                    <div class="modal-body">
+
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{name}"
+                                   required
+                                   minlength="3"
+                                   maxlength="50"
+                                   oninvalid="this.setCustomValidity('Tên phải từ 3-50 ký tự')"
+                                   oninput="this.setCustomValidity('')">
+                            <div class="text-danger"
+                                 th:if="${#fields.hasErrors('name')}"
+                                 th:errors="*{name}">
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{phone}"
+                                   required
+                                   pattern="0[0-9]{9}"
+                                   oninvalid="this.setCustomValidity('SĐT phải 10 số và bắt đầu bằng 0')"
+                                   oninput="this.setCustomValidity('')">
+                            <div class="text-danger"
+                                 th:if="${#fields.hasErrors('phone')}"
+                                 th:errors="*{phone}"
+                            >
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{password}"
+                                   required
+                                   minlength="6"
+                                   oninvalid="this.setCustomValidity('Mật khẩu tối thiểu 6 ký tự')"
+                                   oninput="this.setCustomValidity('')">
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Hủy
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Lưu
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+<script th:if="${openModal}">
+    var myModal = new bootstrap.Modal(document.getElementById('addUserModal'));
+    myModal.show();
+</script>
+
+</html>

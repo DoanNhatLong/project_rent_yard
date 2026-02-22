@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="admin/layout :: layout(~{::section}, 'Quản lý Sân')">
+
+<section>
+    <h3>Quản lý sân </h3>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/admins/yard}" method="get" class="row g-3 mb-4">
+
+                <div class="col-md-3">
+                    <label class="form-label">Loại sân</label>
+                    <select name="fieldType" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        <option value="Field5"
+                                th:selected="${param.fieldType != null and param.fieldType[0] == 'Field5'}">
+                            Sân 5
+                        </option>
+
+                        <option value="Field7"
+                                th:selected="${param.fieldType != null and param.fieldType[0] == 'Field7'}">
+                            Sân 7
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="fieldStatus" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        <option value="AVAILABLE"
+                                th:selected="${param.fieldStatus != null and param.fieldStatus[0] == 'AVAILABLE'}">
+                            Hoạt động
+                        </option>
+
+                        <option value="BOOKED"
+                                th:selected="${param.fieldStatus != null and param.fieldStatus[0] == 'BOOKED'}">
+                            Đã đặt
+                        </option>
+
+                        <option value="MAINTENANCE"
+                                th:selected="${param.fieldStatus != null and param.fieldStatus[0] == 'MAINTENANCE'}">
+                            Bảo trì
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Giá từ</label>
+                    <input type="number" name="minPrice" class="form-control"
+                           th:value="${param.minPrice}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Giá đến</label>
+                    <input type="number" name="maxPrice" class="form-control"
+                           th:value="${param.maxPrice}">
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary">Lọc</button>
+                    <a th:href="@{/admins/yard}" class="btn btn-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <td>Tên sân</td>
+            <td>Loại sân</td>
+            <td>Trạng thái</td>
+            <td>Giá</td>
+            <td>Giờ trống</td>
+            <td>Hành động</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="field:${fields}">
+            <td th:text="${field.name}"></td>
+            <td th:text="${field.fieldType}"></td>
+            <td th:text="${field.status}"></td>
+            <td th:text="${field.price}"></td>
+            <td>
+
+                <div th:if="${field.status.name() == 'AVAILABLE'}"
+                     class="d-flex flex-wrap gap-1">
+
+                    <a th:each="slot : ${slotMap[field.id]}"
+                       th:if="${slot.available}"
+                       class="btn btn-sm btn-success book-slot"
+                       th:data-field-id="${field.id}"
+                       th:data-start="${slot.startTime}"
+                       th:text="${slot.startTime.minusHours(1)}">
+                    </a>
+
+                </div>
+
+                <span th:if="${field.status.name() == 'BOOKED'}"
+                      class="badge bg-danger fs-6">
+                    ⛔ Đã full
+                </span>
+
+
+                <span th:if="${field.status.name() == 'MAINTENANCE'}"
+                      class="badge bg-warning text-dark fs-6">
+                    🔧 Đang bảo trì
+                </span>
+
+            </td>
+
+            <td>
+                <a class="btn btn-primary"> Full </a>
+                <a class="btn btn-danger"> Cancel </a>
+            </td>
+
+        </tr>
+        </tbody>
+
+    </table>
+    <div class="alert alert-warning" th:if="${fields.size() == 0}">
+        Không có sân phù hợp
+    </div>
+
+    <nav th:if="${fieldPage.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+
+            <!-- Prev -->
+            <li class="page-item" th:classappend="${fieldPage.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admins/yard(
+                       page=${fieldPage.number - 1},
+                       fieldType=${param.fieldType},
+                       fieldStatus=${param.fieldStatus},
+                       minPrice=${param.minPrice},
+                       maxPrice=${param.maxPrice}
+                   )}">
+                    &laquo;
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, fieldPage.totalPages - 1)}"
+                th:classappend="${i == fieldPage.number} ? 'active'">
+
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/admins/yard(
+                       page=${i},
+                       fieldType=${param.fieldType},
+                       fieldStatus=${param.fieldStatus},
+                       minPrice=${param.minPrice},
+                       maxPrice=${param.maxPrice}
+                   )}">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item" th:classappend="${fieldPage.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admins/yard(
+                       page=${fieldPage.number + 1},
+                       fieldType=${param.fieldType},
+                       fieldStatus=${param.fieldStatus},
+                       minPrice=${param.minPrice},
+                       maxPrice=${param.maxPrice}
+                   )}">
+                    &raquo;
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+    <!-- Modal xác nhận -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận đặt sân</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    Bạn có chắc muốn đặt khung giờ này không?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="button" class="btn btn-primary" id="confirmBooking">
+                        Xác nhận
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFieldId = null;
+        let selectedStartTime = null;
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document.querySelectorAll(".book-slot").forEach(button => {
+
+                button.addEventListener("click", function () {
+
+                    selectedFieldId = this.dataset.fieldId;
+                    selectedStartTime = this.dataset.start;
+
+                    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                    modal.show();
+                });
+
+            });
+
+        });
+    </script>
+
+    <script>
+        document.getElementById("confirmBooking")
+            .addEventListener("click", function () {
+
+                fetch("/admins/api/book", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        fieldId: selectedFieldId,
+                        startTime: selectedStartTime
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Lỗi tạo booking");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert("Có lỗi xảy ra!");
+                        console.error(error);
+                    });
+
+            });
+    </script>
+
+
+</section>
+
+</html>

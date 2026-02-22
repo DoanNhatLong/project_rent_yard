@@ -18,6 +18,10 @@ body {
     box-sizing: border-box;
 }
 
+.weather-wrapper img {
+    width: 60px;
+}
+
 
 .time-select {
     display: grid;

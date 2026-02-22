@@ -16,4 +16,6 @@ public interface IFieldService {
             Pageable pageable);
 
     Field findById(Integer id);
+    List<Field> findAll();
+    void save(Field field);
 }
