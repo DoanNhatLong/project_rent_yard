@@ -1,4 +1,4 @@
-<div th:fragment="table(data, headers, fields)">
+<div th:fragment="table(data, headers, fields, actionFragment)">
 
   <table class="table table-striped">
 
@@ -7,14 +7,24 @@
       <th th:each="h : ${headers}"
           th:text="${h}">
       </th>
+
+      <th th:if="${actionFragment != null}">
+        Action
+      </th>
     </tr>
     </thead>
 
     <tbody>
     <tr th:each="row : ${data}">
+
       <td th:each="f : ${fields}"
           th:text="${row[f]}">
       </td>
+
+      <td th:if="${actionFragment != null}">
+        <div th:replace="${actionFragment}"></div>
+      </td>
+
     </tr>
     </tbody>
 

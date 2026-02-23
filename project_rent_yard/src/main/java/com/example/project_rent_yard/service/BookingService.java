@@ -28,6 +28,8 @@ public class BookingService implements IBookingService {
     IServiceRepository serviceRepository;
     @Autowired
     ExtraService extraService;
+    @Autowired
+    IServiceBookingService serviceBookingService;
 
 
     @Override

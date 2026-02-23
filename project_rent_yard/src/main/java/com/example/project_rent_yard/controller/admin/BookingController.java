@@ -2,7 +2,9 @@ package com.example.project_rent_yard.controller.admin;
 
 import com.example.project_rent_yard.dto.ViewBookingDto;
 import com.example.project_rent_yard.entity.Booking;
+import com.example.project_rent_yard.entity.Service;
 import com.example.project_rent_yard.service.IBookingService;
+import com.example.project_rent_yard.service.IServiceService;
 import com.example.project_rent_yard.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,9 +25,10 @@ import java.util.List;
 public class BookingController {
     @Autowired
     IBookingService bookingService;
-
     @Autowired
     IUserService userService;
+    @Autowired
+    IServiceService serviceService;
 
 
     @GetMapping("")
@@ -38,7 +41,13 @@ public class BookingController {
             Pageable pageable
             ) {
 
+        if (userName != null && userName.isBlank()) {
+            userName = null;
+        }
         Page<ViewBookingDto> bookings=bookingService.getAllForAdmin(pageable, status, userName, bookingDate);
+        if (bookings == null) {
+            bookings = Page.empty(pageable);
+        }
         model.addAttribute("users", userService.findAll());
         model.addAttribute("status", Booking.BookingStatus.values());
         model.addAttribute("page",bookings);
@@ -62,5 +71,12 @@ public class BookingController {
                 "bookingDate"
         ));
         return "/admin/booking";
+    }
+
+    @GetMapping("/addService")
+    public String addService(Model model){
+        List<Service> serviceList=serviceService.findAll();
+        model.addAttribute("services",serviceList);
+        return "/admin/add-service";
     }
 }

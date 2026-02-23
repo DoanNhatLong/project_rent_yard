@@ -1,8 +1,7 @@
 package com.example.project_rent_yard.repository;
 
-import com.example.project_rent_yard.dto.ViewBookingDto;
+
 import com.example.project_rent_yard.entity.Booking;
-import com.example.project_rent_yard.entity.Field;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -37,10 +35,18 @@ public interface IBookingRepository extends JpaRepository<Booking,Integer>, JpaS
     @Query("""
 select b from Booking b
 where (:status is null or b.status = :status)
-and (:userName is null or b.user.name like %:userName%)
+and (
+      :userName is null
+      or :userName = ''
+      or lower(b.user.name) like lower(concat('%', :userName, '%'))
+)
 and (:bookingDate is null or b.bookingDate = :bookingDate)
 """)
-    Page<Booking> findAllForAdmin(@Param("status") Booking.BookingStatus status, @Param("userName") String userName,
-                                  @Param("bookingDate") LocalDate bookingDate, Pageable pageable);
+    Page<Booking> findAllForAdmin(
+            @Param("status") Booking.BookingStatus status,
+            @Param("userName") String userName,
+            @Param("bookingDate") LocalDate bookingDate,
+            Pageable pageable
+    );
 
 }

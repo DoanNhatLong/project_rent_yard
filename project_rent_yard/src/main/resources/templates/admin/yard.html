@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="admin/layout :: layout(~{::section}, 'Quản lý Sân')">
+      th:replace="~{admin/layout :: layout(~{::section}, 'Quản lý User')}">
 
 <section>
     <h3>Quản lý sân </h3>
@@ -114,8 +114,8 @@
             </td>
 
             <td>
-                <a class="btn btn-primary"> Full </a>
-                <a class="btn btn-danger"> Cancel </a>
+                <a th:href="@{/admins/booking/addService}" class="btn btn-primary"> Thêm dịch vụ </a>
+                <a class="btn btn-danger"> Hủy </a>
             </td>
 
         </tr>
@@ -181,7 +181,6 @@
     <div class="modal fade" id="confirmModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-
                 <div class="modal-header">
                     <h5 class="modal-title">Xác nhận đặt sân</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
