@@ -1,8 +1,11 @@
 package com.example.project_rent_yard.service;
 
+import com.example.project_rent_yard.dto.AddServiceForm;
+import com.example.project_rent_yard.dto.BookingFilter;
 import com.example.project_rent_yard.dto.SearchDto;
 import com.example.project_rent_yard.dto.ViewBookingDto;
 import com.example.project_rent_yard.entity.Booking;
+import com.example.project_rent_yard.entity.ServiceBooking;
 import com.example.project_rent_yard.exception.BookingConflictException;
 import com.example.project_rent_yard.mapper.BookingMapper;
 import com.example.project_rent_yard.repository.IBookingRepository;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -49,9 +53,9 @@ public class BookingService implements IBookingService {
 
     @Override
     public List<Integer> searchBusyField(SearchDto searchDto) {
-        List<Booking> bookings=bookingRepository.findAll(BookingSpecification.busyField(searchDto));
+        List<Booking> bookings = bookingRepository.findAll(BookingSpecification.busyField(searchDto));
         return bookings.stream()
-                .map(b->b.getField().getId())
+                .map(b -> b.getField().getId())
                 .distinct()
                 .toList()
                 ;
@@ -59,7 +63,7 @@ public class BookingService implements IBookingService {
 
     @Override
     public List<Booking> findBookingsByBookingDateAndFieldId(LocalDate bookingDate, Integer field_id) {
-        return bookingRepository.findBookingsByBookingDateAndFieldId(bookingDate,field_id);
+        return bookingRepository.findBookingsByBookingDateAndFieldId(bookingDate, field_id);
     }
 
     @Override
@@ -98,23 +102,52 @@ public class BookingService implements IBookingService {
                 .map(BookingMapper::toViewBookingDto);
     }
 
+    @Override
+    public Page<ViewBookingDto> getAllForAdmin(Pageable pageable, BookingFilter bookingFilter) {
+        Specification<Booking> specification =
+                BookingSpecification.filterBooking(bookingFilter);
 
-    @Transactional
-    public void markCompleted(Integer bookingId) {
+        Page<Booking> bookings =
+                bookingRepository.findAll(specification, pageable);
 
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow();
-
-        booking.setStatus(Booking.BookingStatus.COMPLETED);
-
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        extraService.createSomething(bookingId);
-                    }
-                }
-        );
+        return bookings.map(BookingMapper::toViewBookingDto);
     }
+
+    @Override
+    public void saveServices(AddServiceForm form) {
+        Booking booking = bookingRepository.findBookingById(form.getBookingId());
+        if (form.getQuantities() != null) {
+            form.getQuantities().forEach((serviceId, quantity) -> {
+
+                if (quantity != null && quantity > 0) {
+
+                    com.example.project_rent_yard.entity.Service service = serviceRepository.findById(serviceId)
+                            .orElseThrow(() -> new RuntimeException("Service không tồn tại"));
+
+                    ServiceBooking sb = new ServiceBooking();
+                    sb.setBooking(booking);
+                    sb.setService(service);
+                    sb.setQuantity(quantity);
+                    serviceBookingService.save(sb);
+                }
+            });
+
+        }
+        if (form.getSpecialServiceIds() != null) {
+            for (Integer serviceId : form.getSpecialServiceIds()) {
+
+                com.example.project_rent_yard.entity.Service service = serviceRepository.findById(serviceId)
+                        .orElseThrow(() -> new RuntimeException("Service không tồn tại"));
+
+                ServiceBooking sb = new ServiceBooking();
+                sb.setBooking(booking);
+                sb.setService(service);
+                sb.setQuantity(1);
+
+                serviceBookingService.save(sb);
+            }
+        }
+    }
+
 
 }

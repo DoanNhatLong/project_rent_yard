@@ -4,17 +4,16 @@
 
 <section>
     <h3>Quản lý Booking</h3>
-    <form action="" method="get">
-        <select name="status">
+    <form th:action="@{/admins/booking}" method="get" th:object="${filter}">
+        <select th:field="*{status}">
             <option value="">Tất cả</option>
             <option th:each="status : ${status}"
-                    th:value="${status.name()}"
-                    th:text="${status.name()}">
+                    th:value="${status}"
+                    th:text="${status}">
             </option>
         </select>
-        <input name="userName" type="text" placeholder="Tên khách hàng"
-               th:value="${param.userName}">
-        <input type="date" name="bookingDate">
+        <input th:field="*{userName}" type="text" placeholder="Tên khách hàng">
+        <input type="date" th:field="*{bookingDate}">
         <button type="submit">Lọc</button>
     </form>
 
@@ -26,81 +25,78 @@
             <div th:replace="~{layout/table :: table(
         ${data},
         ${headers},
-        ${fields},
-        ~{::bookingActions}
+        ${fields}
 )}">
             </div>
         </div>
     </div>
 
-        <nav th:if="${page.totalPages > 1}">
-            <ul class="pagination justify-content-center">
+    <nav th:if="${page.totalPages > 0}">
+        <ul class="pagination justify-content-center">
 
-                <!-- Prev -->
-                <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-                    <a class="page-link"
-                       th:if="${!page.first}"
-                       th:href="@{/admins/booking(
+            <!-- Prev -->
+            <li class="page-item"
+                th:classappend="${page.first} ? 'disabled'">
+
+                <a class="page-link"
+                   th:if="${!page.first}"
+                   th:href="@{/admins/booking(
                     page=${page.number - 1},
-                    status=${param.status},
-                    userName=${param.userName},
-                    bookingDate=${param.bookingDate}
+                    status=${filter.status},
+                    userName=${filter.userName},
+                    bookingDate=${filter.bookingDate}
                )}">
-                        &laquo;
-                    </a>
-                    <span class="page-link" th:if="${page.first}">&laquo;</span>
-                </li>
+                    &laquo;
+                </a>
 
-                <!-- Page numbers -->
-                <li class="page-item"
-                    th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-                    th:classappend="${i == page.number} ? 'active'">
+                <span class="page-link"
+                      th:if="${page.first}">
+                &laquo;
+            </span>
+            </li>
 
-                    <a class="page-link"
-                       th:text="${i + 1}"
-                       th:href="@{/admins/booking(
+
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active'">
+
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/admins/booking(
                     page=${i},
-                    status=${param.status},
-                    userName=${param.userName},
-                    bookingDate=${param.bookingDate}
+                    status=${filter.status},
+                    userName=${filter.userName},
+                    bookingDate=${filter.bookingDate}
                )}">
-                    </a>
-                </li>
+                </a>
+            </li>
 
-                <!-- Next -->
-                <li class="page-item" th:classappend="${page.last} ? 'disabled'">
-                    <a class="page-link"
-                       th:if="${!page.last}"
-                       th:href="@{/admins/booking(
+
+            <!-- Next -->
+            <li class="page-item"
+                th:classappend="${page.last} ? 'disabled'">
+
+                <a class="page-link"
+                   th:if="${!page.last}"
+                   th:href="@{/admins/booking(
                     page=${page.number + 1},
-                    status=${param.status},
-                    userName=${param.userName},
-                    bookingDate=${param.bookingDate}
+                    status=${filter.status},
+                    userName=${filter.userName},
+                    bookingDate=${filter.bookingDate}
                )}">
-                        &raquo;
-                    </a>
-                    <span class="page-link" th:if="${page.last}">&raquo;</span>
-                </li>
+                    &raquo;
+                </a>
 
-            </ul>
-        </nav>
+                <span class="page-link"
+                      th:if="${page.last}">
+                &raquo;
+            </span>
+            </li>
 
-    <div th:fragment="bookingActions">
-        <div class="d-flex gap-2">
+        </ul>
+    </nav>
 
-            <a th:href="@{/admins/booking/addService/{id}(id=${row.id})}"
-               class="btn btn-sm btn-info">
-                Thêm dịch vụ
-            </a>
-
-            <a th:href="@{/admins/booking/delete/{id}(id=${row.id})}"
-               class="btn btn-sm btn-danger"
-               onclick="return confirm('Bạn chắc chắn muốn xóa?')">
-                Xóa
-            </a>
-
-        </div>
-    </div>
 </section>
 
 

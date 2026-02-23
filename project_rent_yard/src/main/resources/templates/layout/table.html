@@ -1,4 +1,4 @@
-<div th:fragment="table(data, headers, fields, actionFragment)">
+<div th:fragment="table(data, headers, fields)">
 
   <table class="table table-striped">
 
@@ -7,10 +7,7 @@
       <th th:each="h : ${headers}"
           th:text="${h}">
       </th>
-
-      <th th:if="${actionFragment != null}">
-        Action
-      </th>
+      <th>Action</th>
     </tr>
     </thead>
 
@@ -20,11 +17,19 @@
       <td th:each="f : ${fields}"
           th:text="${row[f]}">
       </td>
+      <td>
+        <a th:if="${row.status == 'PENDING'}"
+           th:href="@{/admins/booking/addService/{id}(id=${row.id})}"
+           class="btn btn-sm btn-info">
+          Thêm dịch vụ
+        </a>
 
-      <td th:if="${actionFragment != null}">
-        <div th:replace="${actionFragment}"></div>
+        <a th:href="@{/admins/booking/delete/{id}(id=${row.id})}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('Bạn chắc chắn muốn xóa?')">
+          Xóa
+        </a>
       </td>
-
     </tr>
     </tbody>
 

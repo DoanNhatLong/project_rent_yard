@@ -34,4 +34,9 @@ public class ServiceBookingService implements IServiceBookingService {
         }
 
     }
+
+    @Override
+    public void save(ServiceBooking sb) {
+        serviceBookingRepository.save(sb);
+    }
 }

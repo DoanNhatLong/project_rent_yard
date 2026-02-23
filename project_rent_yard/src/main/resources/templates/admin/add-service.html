@@ -1,10 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Add-Service</title>
+    <th:block th:replace="~{layout/layout :: library}"></th:block>
+    <link rel="stylesheet" href="/css/service.css">
+
 </head>
 <body>
+<div class="container mt-5">
 
+    <form th:action="@{/admins/booking/add-service}" method="post">
+        <input type="hidden" name="bookingId" th:value="${bookingId}"/>
+
+        <div class="row g-4">
+
+            <div class="col-md-6 col-lg-4"
+                 th:each="service : ${services}">
+
+                <div class="service-card shadow-sm p-4 h-100">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 fw-semibold"
+                            th:text="${service.name}"></h5>
+
+                        <span class="price-badge"
+                              th:text="${#numbers.formatDecimal(service.price,0,'COMMA',0,'POINT')} + ' đ'">
+                        </span>
+                    </div>
+
+                    <!-- Checkbox cho id 6,7 -->
+                    <div th:if="${service.id == 6 or service.id == 7}">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="specialServiceIds"
+                                   th:value="${service.id}">
+                            <label class="form-check-label">
+                                Thuê dịch vụ
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Quantity cho service khác -->
+                    <div th:unless="${service.id == 6 or service.id == 7}">
+                        <label class="form-label small text-muted">
+                            Số lượng
+                        </label>
+
+                        <div class="quantity-wrapper">
+                            <button type="button" class="qty-btn minus">−</button>
+
+                            <input type="number"
+                                   min="0"
+                                   value="0"
+                                   class="qty-input"
+                                   th:name="|quantities[${service.id}]|">
+
+                            <button type="button" class="qty-btn plus">+</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-lg btn-success px-5">
+                Lưu dịch vụ
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+    document.addEventListener("click", function(e) {
+
+        if (e.target.classList.contains("plus")) {
+            const input = e.target.parentElement.querySelector(".qty-input");
+            input.value = parseInt(input.value) + 1;
+        }
+
+        if (e.target.classList.contains("minus")) {
+            const input = e.target.parentElement.querySelector(".qty-input");
+            if (parseInt(input.value) > 0) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+    });
+</script>
 </body>
 </html>

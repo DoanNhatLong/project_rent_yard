@@ -1,5 +1,7 @@
 package com.example.project_rent_yard.controller.admin;
 
+import com.example.project_rent_yard.dto.AddServiceForm;
+import com.example.project_rent_yard.dto.BookingFilter;
 import com.example.project_rent_yard.dto.ViewBookingDto;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Service;
@@ -13,12 +15,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admins/booking")
@@ -34,20 +35,14 @@ public class BookingController {
     @GetMapping("")
     public String goBooking(
             Model model,
-            @RequestParam(required = false) Booking.BookingStatus status,
-            @RequestParam(required = false) String userName,
-            @RequestParam(required = false) LocalDate bookingDate,
+            BookingFilter bookingFilter,
             @PageableDefault(size = 10, sort = "bookingDate", direction = Sort.Direction.DESC)
             Pageable pageable
             ) {
 
-        if (userName != null && userName.isBlank()) {
-            userName = null;
-        }
-        Page<ViewBookingDto> bookings=bookingService.getAllForAdmin(pageable, status, userName, bookingDate);
-        if (bookings == null) {
-            bookings = Page.empty(pageable);
-        }
+
+        Page<ViewBookingDto> bookings=bookingService.getAllForAdmin(pageable, bookingFilter);
+        model.addAttribute("filter", bookingFilter);
         model.addAttribute("users", userService.findAll());
         model.addAttribute("status", Booking.BookingStatus.values());
         model.addAttribute("page",bookings);
@@ -73,10 +68,26 @@ public class BookingController {
         return "/admin/booking";
     }
 
-    @GetMapping("/addService")
-    public String addService(Model model){
+    @GetMapping("/addService/{id}")
+    public String addService(
+            @PathVariable("id") Integer bookingId,
+            Model model){
         List<Service> serviceList=serviceService.findAll();
+        model.addAttribute("bookingId", bookingId);
         model.addAttribute("services",serviceList);
         return "/admin/add-service";
+    }
+
+    @PostMapping("/add-service")
+    public String saveService(
+            @ModelAttribute AddServiceForm form
+            ) {
+
+        System.out.println("bookingId = " + form.getBookingId());
+        System.out.println("specialServiceIds = " + form.getSpecialServiceIds());
+        System.out.println("quantities = " + form.getQuantities());
+        bookingService.saveServices(form);
+
+        return "redirect:/admins/booking";
     }
 }

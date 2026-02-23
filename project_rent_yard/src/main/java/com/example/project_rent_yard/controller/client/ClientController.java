@@ -153,7 +153,7 @@ public class ClientController {
             serviceCost += s.getPrice() * cart.get(s.getId());
         }
 
-        double total = fieldCost + serviceCost;
+        double total = (fieldCost + serviceCost)/2;
 
         model.addAttribute("booking", booking);
         model.addAttribute("hour", hour);
@@ -185,7 +185,6 @@ public class ClientController {
         double total = (double) vnp_Amount / 100;
         Booking booking = bookingService.findBookingById(vnp_TxnRef);
         booking.setDepositAmount(total);
-        booking.setStatus(Booking.BookingStatus.COMPLETED);
         bookingService.updateBooking(booking);
         User user = booking.getUser();
         user.setTotalSpent(user.getTotalSpent() + total);
