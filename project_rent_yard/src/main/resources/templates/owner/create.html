@@ -6,6 +6,35 @@
     <th:block th:replace="layout/layout :: library"></th:block>
 </head>
 <body>
+<div class="container">
+    <form th:action="@{/owners/addField}" th:object="${field}" method="post">
+        <input type="text" th:field="*{name}" placeholder="name" class="form-control mb-2"/>
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('name')}"
+             th:text="${#fields.errors('name')[0]}">
+        </div>
+        <input type="number" th:field="*{price}" placeholder="price" class="form-control mb-2"/>
+        <div class="text-danger"
+             th:if="${#fields.hasErrors('price')}"
+             th:text="${#fields.errors('price')[0]}">
+        </div>
+        <select th:field="*{fieldType}">
+            <option th:each="type: ${fieldTypes}"
+                    th:value="${type}"
+                    th:text="${type}">
 
+            </option>
+        </select>
+        <select th:field="*{status}">
+            <option th:each="status: ${statuses}"
+                    th:value="${status}"
+                    th:text="${status}">
+
+            </option>
+        </select>
+        <input type="text" th:field="*{imageUrl}" placeholder="imageUrl" class="form-control mb-2"/>
+    <button> Thêm sân mới </button>
+    </form>
+</div>
 </body>
 </html>

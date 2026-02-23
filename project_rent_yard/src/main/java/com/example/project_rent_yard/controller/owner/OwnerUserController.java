@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
@@ -40,6 +41,18 @@ public class OwnerUserController {
         model.addAttribute("users", users);
         model.addAttribute("newUser", new User());
         return "/owner/user";
+    }
+
+    @GetMapping("/block/{id}")
+    public String blockUser(@PathVariable Integer id){
+        User user=userService.findById(id);
+        if(user.getStatus().name().equals("ACTIVE")){
+            user.setStatus(User.Status.BLOCKED);
+        }else{
+            user.setStatus(User.Status.ACTIVE);
+        }
+        userService.save(user);
+        return "redirect:/owners/user";
     }
 
 }

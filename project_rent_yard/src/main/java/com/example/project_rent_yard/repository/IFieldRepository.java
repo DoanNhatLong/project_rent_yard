@@ -28,4 +28,5 @@ and (:maxPrice is null or f.price<=:maxPrice)
             @Param("maxPrice") Double maxPrice,
             Pageable pageable
     );
+    boolean existsByNameIgnoreCaseAndIsDeletedFalse(String name);
 }

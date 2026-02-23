@@ -1,17 +1,18 @@
 package com.example.project_rent_yard.controller.owner;
 
+import com.example.project_rent_yard.dto.FieldCreateDto;
 import com.example.project_rent_yard.entity.Field;
 import com.example.project_rent_yard.service.IFieldService;
+import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/owners")
@@ -60,7 +61,26 @@ public class OwnerController {
 
     @GetMapping("/addField")
     public String createField(Model model) {
-            model.addAttribute("field", new Field());
+        model.addAttribute("statuses", Field.FieldStatus.values());
+        model.addAttribute("fieldTypes", Field.FieldType.values());
+        model.addAttribute("field", new FieldCreateDto());
         return "/owner/create";
+    }
+
+    @PostMapping("/addField")
+    public String saveField(
+            @Valid @ModelAttribute("field") FieldCreateDto field,
+            BindingResult bindingResult,
+            Model model
+    ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("statuses", Field.FieldStatus.values());
+            model.addAttribute("fieldTypes", Field.FieldType.values());
+            return "/owner/create";
+        }
+        Field field1= new Field();
+        BeanUtils.copyProperties(field,field1);
+        fieldService.save(field1);
+        return "redirect:/owners/yard";
     }
 }

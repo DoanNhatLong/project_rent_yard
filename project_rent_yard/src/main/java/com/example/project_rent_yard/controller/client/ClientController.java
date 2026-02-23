@@ -42,6 +42,8 @@ public class ClientController {
     private ITimeSlotDtoService timeSlotDtoService;
     @Autowired
     private WeatherService weatherService;
+    @Autowired
+    private IServiceBookingService serviceBookingService;
 
     @ModelAttribute("fields")
     public Page<Field> getFieldList(Pageable pageable) {
@@ -168,6 +170,7 @@ public class ClientController {
     public String pay(HttpSession session) {
         Booking booking = (Booking) session.getAttribute("BOOKING");
         Map<Integer, Integer> cart = (Map<Integer, Integer>) session.getAttribute("SERVICE_MAP");
+        serviceBookingService.createServiceBooking(booking.getId(), cart);
         Double total = (Double) session.getAttribute("total");
         String vnPayUrl = vnPayService.createVnPayUrl(booking.getId(), total);
         return "redirect:" + vnPayUrl;

@@ -39,4 +39,9 @@ public class FieldService implements IFieldService {
     public void save(Field field) {
         fieldRepository.save(field);
     }
+
+    @Override
+    public boolean existsByNameIgnoreCaseAndIsDeletedFalse(String name) {
+        return fieldRepository.existsByNameIgnoreCaseAndIsDeletedFalse(name);
+    }
 }

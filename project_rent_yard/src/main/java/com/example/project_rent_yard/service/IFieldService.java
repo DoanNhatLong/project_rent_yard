@@ -18,4 +18,5 @@ public interface IFieldService {
     Field findById(Integer id);
     List<Field> findAll();
     void save(Field field);
+    boolean existsByNameIgnoreCaseAndIsDeletedFalse(String name);
 }

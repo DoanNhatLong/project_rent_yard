@@ -36,7 +36,7 @@ public class Field {
     }
 
     public enum FieldStatus {
-        AVAILABLE, MAINTENANCE, BOOKED
+        AVAILABLE, MAINTENANCE
     }
 
     @Override

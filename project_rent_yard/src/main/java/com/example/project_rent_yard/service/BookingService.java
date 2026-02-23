@@ -6,6 +6,7 @@ import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.exception.BookingConflictException;
 import com.example.project_rent_yard.mapper.BookingMapper;
 import com.example.project_rent_yard.repository.IBookingRepository;
+import com.example.project_rent_yard.repository.IServiceRepository;
 import com.example.project_rent_yard.specification.BookingSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,6 +24,8 @@ import java.util.List;
 public class BookingService implements IBookingService {
     @Autowired
     IBookingRepository bookingRepository;
+    @Autowired
+    IServiceRepository serviceRepository;
     @Autowired
     ExtraService extraService;
 
