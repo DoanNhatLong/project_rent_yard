@@ -2,7 +2,9 @@ package com.example.project_rent_yard.controller.owner;
 
 import com.example.project_rent_yard.dto.FieldCreateDto;
 import com.example.project_rent_yard.entity.Field;
+import com.example.project_rent_yard.repository.projection.ServiceBookingView;
 import com.example.project_rent_yard.service.IFieldService;
+import com.example.project_rent_yard.service.IServiceBookingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +16,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/owners")
 public class OwnerController {
     @Autowired
     IFieldService fieldService;
+    @Autowired
+    IServiceBookingService serviceBookingService;
 
     @GetMapping("")
     public String ownerHome() {
@@ -82,5 +88,12 @@ public class OwnerController {
         BeanUtils.copyProperties(field,field1);
         fieldService.save(field1);
         return "redirect:/owners/yard";
+    }
+
+    @GetMapping("/profit")
+    public String goProfit(Model model) {
+        List<ServiceBookingView> data = serviceBookingService.getAllServiceBookingViews();
+        model.addAttribute("data", data);
+        return "/owner/profit";
     }
 }

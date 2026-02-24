@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="owner/layout :: layout(~{::section}, 'Dashboard')">
+
+<section>
+  <h3>Profit</h3>
+
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr th:each="row : ${data}">
+          <td th:text="${row.id}"></td>
+          <td th:text="${row.quantity}"></td>
+          <td th:text="${row.fieldName}"></td>
+          <td th:text="${row.serviceName}"></td>
+          <td th:text="${row.fieldPrice}"></td>
+          <td th:text="${row.servicePrice}"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+</html>

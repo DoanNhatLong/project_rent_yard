@@ -45,6 +45,7 @@ public class BookingSpecification {
         return (root, query, cb) -> {
 
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.isFalse(root.get("isDeleted")));
 
             // 1. Status
             if (filter.getStatus() != null) {

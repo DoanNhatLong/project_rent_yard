@@ -23,6 +23,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService implements IBookingService {
@@ -113,38 +114,89 @@ public class BookingService implements IBookingService {
         return bookings.map(BookingMapper::toViewBookingDto);
     }
 
+    @Transactional
     @Override
     public void saveServices(AddServiceForm form) {
-        Booking booking = bookingRepository.findBookingById(form.getBookingId());
+
+        Booking booking = bookingRepository
+                .findBookingById(form.getBookingId());
+
+        // =========================
+        // 1️⃣ Xử lý service có quantity
+        // =========================
         if (form.getQuantities() != null) {
+
             form.getQuantities().forEach((serviceId, quantity) -> {
 
                 if (quantity != null && quantity > 0) {
 
-                    com.example.project_rent_yard.entity.Service service = serviceRepository.findById(serviceId)
-                            .orElseThrow(() -> new RuntimeException("Service không tồn tại"));
+                    Optional<ServiceBooking> optional =
+                            serviceBookingService
+                                    .findByBookingIdAndServiceId(
+                                            booking.getId(), serviceId);
+
+                    if (optional.isPresent()) {
+
+                        // Nếu đã tồn tại → cộng thêm quantity
+                        ServiceBooking existing = optional.get();
+                        existing.setQuantity(
+                                existing.getQuantity() + quantity
+                        );
+                        serviceBookingService.save(existing);
+
+                    } else {
+
+                        // Nếu chưa tồn tại → tạo mới
+                        com.example.project_rent_yard.entity.Service service =
+                                serviceRepository.findById(serviceId)
+                                        .orElseThrow(() ->
+                                                new RuntimeException("Service không tồn tại"));
+
+                        ServiceBooking sb = new ServiceBooking();
+                        sb.setBooking(booking);
+                        sb.setService(service);
+                        sb.setQuantity(quantity);
+
+                        serviceBookingService.save(sb);
+                    }
+                }
+            });
+        }
+
+        // =========================
+        // 2️⃣ Xử lý checkbox (quantity = 1)
+        // =========================
+        if (form.getSpecialServiceIds() != null) {
+
+            for (Integer serviceId : form.getSpecialServiceIds()) {
+
+                Optional<ServiceBooking> optional =
+                        serviceBookingService
+                                .findByBookingIdAndServiceId(
+                                        booking.getId(), serviceId);
+
+                if (optional.isPresent()) {
+
+                    // Nếu đã tồn tại → tăng thêm 1
+                    ServiceBooking existing = optional.get();
+                    existing.setQuantity(existing.getQuantity() + 1);
+                    serviceBookingService.save(existing);
+
+                } else {
+
+                    // Nếu chưa tồn tại → tạo mới với quantity = 1
+                    com.example.project_rent_yard.entity.Service service =
+                            serviceRepository.findById(serviceId)
+                                    .orElseThrow(() ->
+                                            new RuntimeException("Service không tồn tại"));
 
                     ServiceBooking sb = new ServiceBooking();
                     sb.setBooking(booking);
                     sb.setService(service);
-                    sb.setQuantity(quantity);
+                    sb.setQuantity(1);
+
                     serviceBookingService.save(sb);
                 }
-            });
-
-        }
-        if (form.getSpecialServiceIds() != null) {
-            for (Integer serviceId : form.getSpecialServiceIds()) {
-
-                com.example.project_rent_yard.entity.Service service = serviceRepository.findById(serviceId)
-                        .orElseThrow(() -> new RuntimeException("Service không tồn tại"));
-
-                ServiceBooking sb = new ServiceBooking();
-                sb.setBooking(booking);
-                sb.setService(service);
-                sb.setQuantity(1);
-
-                serviceBookingService.save(sb);
             }
         }
     }

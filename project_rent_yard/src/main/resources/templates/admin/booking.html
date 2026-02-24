@@ -4,6 +4,7 @@
 
 <section>
     <h3>Quản lý Booking</h3>
+    <div th:replace="layout/toast :: toast(${message})"></div>
     <form th:action="@{/admins/booking}" method="get" th:object="${filter}">
         <select th:field="*{status}">
             <option value="">Tất cả</option>

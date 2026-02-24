@@ -103,7 +103,6 @@ public class ClientController {
             HttpSession session,
             HttpServletRequest request
     ) {
-        System.out.println("RENT CALLED");
         User user = (User) session.getAttribute("user");
         Field field = fieldService.findById(fieldId);
         Booking booking = new Booking();
@@ -189,7 +188,7 @@ public class ClientController {
         User user = booking.getUser();
         user.setTotalSpent(user.getTotalSpent() + total);
         userService.save(user);
-        redirectAttributes.addFlashAttribute("mess", "Thuê sân thành công");
+        redirectAttributes.addFlashAttribute("message", "Thuê sân thành công");
         return "redirect:/clients";
     }
 
@@ -231,11 +230,15 @@ public class ClientController {
     }
 
     @GetMapping("rent")
-    public String goRent(@RequestParam("fieldId") Integer id, Model model) {
+    public String goRent(@RequestParam("fieldId") Integer id,
+                         HttpSession session,
+                         Model model) {
         Field field = fieldService.findById(id);
         model.addAttribute("field", field);
         List<Service> list = serviceService.findAll();
         model.addAttribute("service", list);
+        SearchDto searchDto = (SearchDto) session.getAttribute("DATA_SEARCH");
+        model.addAttribute("searchData", searchDto);
         return "/client/rent";
     }
 
@@ -317,7 +320,7 @@ public class ClientController {
             serviceCost += service.getPrice() * quantity;
         }
 
-        double totalCost = fieldCost + serviceCost;
+        double totalCost = (fieldCost + serviceCost)/2;
         System.out.println(totalCost);
         model.addAttribute("totalCost",totalCost);
         User user= (User) session.getAttribute("user");
