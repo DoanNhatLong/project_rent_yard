@@ -18,47 +18,51 @@
 <div th:replace="layout/navbar:: navbar"></div>
 
 <div class="container mt-4">
+    <div class="card p-4 shadow-sm mb-4">
+        <form th:action="@{/clients/yards}" method="get" class="row g-3 mb-4">
 
-    <h2 class="mb-4">Danh sách sân bóng</h2>
+            <div class="col-md-2">
+                <label class="form-label">Loại sân</label>
+                <select name="fieldType" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="Field5" th:selected="${param.fieldType == 'Field5'}">Sân 5</option>
+                    <option value="Field7" th:selected="${param.fieldType == 'Field7'}">Sân 7</option>
+                </select>
+            </div>
 
-    <form th:action="@{/clients/yards}" method="get" class="row g-3 mb-4">
+            <div class="col-md-2">
+                <label class="form-label">Trạng thái</label>
+                <select name="fieldStatus" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="AVAILABLE" th:selected="${param.fieldStatus == 'AVAILABLE'}">Còn trống</option>
+                    <option value="AVAILABLE" th:selected="${param.fieldStatus == 'BOOKED'}">Đã full</option>
+                    <option value="MAINTENANCE" th:selected="${param.fieldStatus == 'MAINTENANCE'}">Bảo trì</option>
+                </select>
+            </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Loại sân</label>
-            <select name="fieldType" class="form-select">
-                <option value="">-- Tất cả --</option>
-                <option value="Field5" th:selected="${param.fieldType == 'Field5'}">Sân 5</option>
-                <option value="Field7" th:selected="${param.fieldType == 'Field7'}">Sân 7</option>
-            </select>
-        </div>
+            <div class="col-md-2">
+                <label class="form-label">Giá từ</label>
+                <input type="number" name="minPrice" class="form-control"
+                       th:value="${param.minPrice}">
+            </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Trạng thái</label>
-            <select name="fieldStatus" class="form-select">
-                <option value="">-- Tất cả --</option>
-                <option value="AVAILABLE" th:selected="${param.fieldStatus == 'AVAILABLE'}">Hoạt động</option>
-                <option value="AVAILABLE" th:selected="${param.fieldStatus == 'BOOKED'}">Đã đặt</option>
-                <option value="MAINTENANCE" th:selected="${param.fieldStatus == 'MAINTENANCE'}">Bảo trì</option>
-            </select>
-        </div>
+            <div class="col-md-2">
+                <label class="form-label">Giá đến</label>
+                <input type="number" name="maxPrice" class="form-control"
+                       th:value="${param.maxPrice}">
+            </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Giá từ</label>
-            <input type="number" name="minPrice" class="form-control"
-                   th:value="${param.minPrice}">
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Giá đến</label>
-            <input type="number" name="maxPrice" class="form-control"
-                   th:value="${param.maxPrice}">
-        </div>
-
-        <div class="col-12">
-            <button class="btn btn-primary">Lọc</button>
-            <a th:href="@{/clients/yards}" class="btn btn-secondary">Reset</a>
-        </div>
-    </form>
+            <div class="col-md-3 ms-auto d-flex align-items-end justify-content-end gap-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    Tìm kiếm
+                </button>
+                <a th:href="@{/clients/yards}"
+                   class="btn btn-outline-secondary w-100">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
 
     <!-- ===== FIELD LIST (2 sân / row) ===== -->
     <div class="row">
@@ -85,7 +89,7 @@
 
                     <p>
                         <strong>Loại:</strong>
-                        <span th:text="${field.fieldType}"></span>
+                        <span th:text="${field.fieldType.name() == 'Field5'} ? 'Sân 5' : 'Sân 7'"></span>
                     </p>
 
                     <p>
@@ -95,7 +99,7 @@
 
                     <span class="badge"
                           th:classappend="${field.status.name() == 'AVAILABLE'} ? 'bg-success' : 'bg-secondary'"
-                          th:text="${field.status}">
+                          th:text="${field.status.name() == 'AVAILABLE'} ? 'Còn trống' : 'Không khả dụng'">
                 </span>
 
                 </div>

@@ -1,0 +1,54 @@
+.football-footer {
+    background: linear-gradient(135deg, #0f2027, #1c2b33);
+    color: #ffffff;
+
+    /* BỎ mọi position */
+    position: static;
+
+    /* Nhẹ lại */
+    padding-top: 40px;
+    padding-bottom: 20px;
+
+    /* Không cho nó đè lên nội dung */
+    margin-top: 60px;
+}
+
+/* Giảm độ sáng chữ phụ */
+.football-footer .text-light {
+    opacity: 0.7 !important;
+}
+
+.brand-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    color: #00ff88;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.footer-heading {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+/* Link */
+.footer-links li {
+    margin-bottom: 6px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #cccccc;
+    transition: 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #00ff88;
+    padding-left: 4px;
+}
+
+/* Divider nhẹ hơn */
+.footer-divider {
+    border-color: rgba(255,255,255,0.1);
+}

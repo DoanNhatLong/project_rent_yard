@@ -75,6 +75,9 @@ public class ClientController {
             @PageableDefault(size = 4) Pageable pageable,
             Model model
     ) {
+        if (fieldStatus == null) {
+            fieldStatus = Field.FieldStatus.AVAILABLE;
+        }
         Page<Field> fieldPage = fieldService.showFields(fieldType, fieldStatus, minPrice, maxPrice, pageable);
         model.addAttribute("fieldPage", fieldPage);
         model.addAttribute("fields", fieldPage.getContent());

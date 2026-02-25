@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <th:block th:replace="layout/layout :: library"></th:block>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+
+<th:block th:fragment="footer">
+    <footer class="football-footer text-white mt-auto">
+
+        <div class="container py-5">
+            <div class="row gy-4">
+
+                <!-- Brand -->
+                <div class="col-md-4">
+                    <h4 class="brand-title">⚽ SportLN</h4>
+                    <p class="small text-light opacity-75">
+                        Nền tảng đặt sân bóng nhanh chóng, tiện lợi và chuyên nghiệp.
+                        Đặt sân chỉ trong vài cú click.
+                    </p>
+                </div>
+
+                <!-- Links -->
+                <div class="col-md-4">
+                    <h6 class="footer-heading">Liên kết nhanh</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="/clients">Trang chủ</a></li>
+                        <li><a href="/clients/yards">Danh sách sân</a></li>
+                        <li><a href="/clients/history">Lịch sử đặt sân</a></li>
+                        <li><a href="/clients/support">Hỗ trợ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-md-4">
+                    <h6 class="footer-heading">Liên hệ</h6>
+                    <p class="small mb-1">🏪 297 Nguyễn Tất Thành,Đà Nẵng , Việt Nam</p>
+                    <p class="small mb-1">📞 0123 456 789</p>
+                    <p class="small">📧 support@sportln.vn</p>
+                </div>
+
+            </div>
+
+            <hr class="footer-divider my-4">
+
+            <div class="text-center small opacity-75">
+                © 2026 SportLN. All rights reserved.
+            </div>
+        </div>
+
+    </footer>
+</th:block>
+
+</body>

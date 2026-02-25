@@ -2,6 +2,16 @@
     color: #dc3545;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.page-content {
+    flex: 1;
+}
+
 
 h1, h2, h3, h4 {
     font-family: 'Oswald', sans-serif;
@@ -238,5 +248,41 @@ body {
 
 .search-form button:hover {
     background: #e0143c;
+}
+
+.weather-wrapper {
+    padding: 40px 0;
+}
+
+.weather-card {
+    background: linear-gradient(145deg, #ffffff, #f3f6fa);
+    border-radius: 18px;
+    padding: 20px 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.weather-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.weather-date {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.weather-icon {
+    width: 65px;
+    height: 65px;
+    margin: 10px 0;
+}
+
+.weather-temp {
+    font-size: 22px;
+    font-weight: 600;
+    color: #0d6efd;
 }
 
