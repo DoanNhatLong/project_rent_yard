@@ -7,6 +7,7 @@
     <title th:text="${pageTitle}">Admin</title>
 
     <th:block th:replace="layout/layout :: library"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body { overflow-x: hidden; }
@@ -14,6 +15,17 @@
         .sidebar {
             height: 100vh;
             background-color: #212529;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 16.666667%;
+            height: 100vh;
+        }
+
+        .content {
+            margin-left: 16.666667%;
         }
 
         .sidebar a {
@@ -42,9 +54,9 @@
         <div class="col-2 sidebar">
             <h4 class="text-white text-center py-3">Owner</h4>
 
-            <a th:href="@{/owners/profit}">Profit</a>
-            <a th:href="@{/owners/yard}">Yard</a>
-            <a th:href="@{/owners/user}">User</a>
+            <a th:href="@{/owners/profit}">Doanh thu</a>
+            <a th:href="@{/owners/yard}">Quản lí sân</a>
+            <a th:href="@{/owners/user}">Quản lí tài khoản </a>
         </div>
 
         <!-- Content -->

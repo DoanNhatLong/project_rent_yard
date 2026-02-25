@@ -1,10 +1,14 @@
 package com.example.project_rent_yard.repository.projection;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 public interface ServiceBookingView {
-    Integer getId();
-    Integer getQuantity();
+    Integer getBookingId();
     String getFieldName();
-    String getServiceName();
     Double getFieldPrice();
-    Double getServicePrice();
+    LocalDate getBookingDate();
+    LocalTime getStartTime();
+    LocalTime getEndTime();
+    Double getTotalServiceAmount();
 }

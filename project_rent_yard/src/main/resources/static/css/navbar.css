@@ -1,0 +1,40 @@
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f6f8;
+}
+
+.spotlight-overlay.active {
+    opacity: 1;
+}
+.spotlight-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+
+    background: transparent; /* thêm dòng này */
+}
+
+.spotlight-hole {
+    position: absolute;
+    border-radius: 50%;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+}
+
+.spotlight-text {
+    position: absolute;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+}
+.spotlight-hole {
+    position: absolute;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+}
+

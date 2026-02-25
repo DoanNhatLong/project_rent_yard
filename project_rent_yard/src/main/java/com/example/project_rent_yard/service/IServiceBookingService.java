@@ -2,6 +2,7 @@ package com.example.project_rent_yard.service;
 
 import com.example.project_rent_yard.entity.ServiceBooking;
 import com.example.project_rent_yard.repository.projection.ServiceBookingView;
+import com.example.project_rent_yard.repository.projection.ServiceStatisticView;
 
 import java.util.List;
 import java.util.Map;
@@ -12,4 +13,5 @@ public interface IServiceBookingService {
     void save(ServiceBooking sb);
     Optional<ServiceBooking> findByBookingIdAndServiceId(Integer bookingId, Integer serviceId);
     List<ServiceBookingView> getAllServiceBookingViews();
+    List<ServiceStatisticView> getServiceStatistics();
 }

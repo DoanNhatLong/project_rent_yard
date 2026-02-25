@@ -1,9 +1,6 @@
 package com.example.project_rent_yard.service;
 
-import com.example.project_rent_yard.dto.AddServiceForm;
-import com.example.project_rent_yard.dto.BookingFilter;
-import com.example.project_rent_yard.dto.SearchDto;
-import com.example.project_rent_yard.dto.ViewBookingDto;
+import com.example.project_rent_yard.dto.*;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.ServiceBooking;
 import com.example.project_rent_yard.exception.BookingConflictException;
@@ -199,6 +196,11 @@ public class BookingService implements IBookingService {
                 }
             }
         }
+    }
+
+    @Override
+    public List<BookingHistoryDto> getBookingHistoryForUser(Integer userId) {
+        return bookingRepository.getBookingHistoryForUser(userId);
     }
 
 

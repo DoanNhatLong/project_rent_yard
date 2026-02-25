@@ -1,6 +1,7 @@
 package com.example.project_rent_yard.repository;
 
 
+import com.example.project_rent_yard.dto.BookingHistoryDto;
 import com.example.project_rent_yard.entity.Booking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,4 +50,21 @@ and (:bookingDate is null or b.bookingDate = :bookingDate)
             Pageable pageable
     );
 
+    @Query("""
+select new com.example.project_rent_yard.dto.BookingHistoryDto(
+b.id,
+b.user.id,
+f.name,
+f.price,
+b.bookingDate,
+b.startTime,
+b.endTime,
+b.status
+)
+from Booking b
+join b.field f
+where b.user.id = :userId
+order by b.bookingDate desc, b.startTime desc
+""")
+    List<BookingHistoryDto> getBookingHistoryForUser(@Param("userId") Integer userId);
 }

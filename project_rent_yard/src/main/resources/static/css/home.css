@@ -2,9 +2,14 @@
     color: #dc3545;
 }
 
+
+h1, h2, h3, h4 {
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+}
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #f5f6f8;
 }
 .search-form select,
@@ -37,11 +42,106 @@ body {
     font-size: 14px;
 }
 
-/* ===== HERO ===== */
+.hero-badge {
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    padding: 20px 28px;
+    border-radius: 16px;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    max-width: 420px;
+    line-height: 1.4;
+}
+
+.hero-badge span {
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 6px;
+    opacity: 0.85;
+}
+
 .hero {
-    height: 520px;
-    background: url("/images/1.jpg") center / cover no-repeat;
     position: relative;
+    height: 500px;
+    overflow: hidden;
+}
+
+.hero .carousel {
+    position: relative;
+    z-index: 0;
+}
+
+.hero .carousel,
+.hero .carousel-inner,
+.hero .carousel-item {
+    height: 100%;
+}
+
+.hero .carousel-item img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.football-highlight {
+    background: linear-gradient(135deg, #111 0%, #1c1c1c 100%);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.football-header h2 {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.football-header p {
+    color: #ff1744;
+    font-weight: 600;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.football-features {
+    max-width: 1200px;
+    margin: 50px auto 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    padding: 0 40px;
+}
+
+.feature {
+    background: #1f1f1f;
+    padding: 25px;
+    border-radius: 14px;
+    transition: 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.feature:hover {
+    transform: translateY(-6px);
+    border-color: #ff1744;
+    box-shadow: 0 10px 25px rgba(255,23,68,0.2);
+}
+
+.feature-icon {
+    font-size: 26px;
+    margin-bottom: 12px;
+}
+
+.feature-title {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.feature-desc {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 6px;
 }
 
 .hero::after {
@@ -49,19 +149,13 @@ body {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+    z-index: 1;
 }
 
-.hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 1200px;
-    height: 100%;
-    margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    color: white;
+.hero .carousel-control-prev,
+.hero .carousel-control-next {
+    z-index: 20;
 }
 
 .hero-text {

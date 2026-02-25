@@ -20,9 +20,20 @@
             <tr th:each="field:${fields}">
                 <td th:text="${field.id}"></td>
                 <td th:text="${field.name}"></td>
-                <td th:text="${field.fieldType}"></td>
+                <td th:text="${field.fieldType.name() == 'Field5'} ? 'Sân 5' : 'Sân 7'"></td>
                 <td th:text="${field.price}"></td>
-                <td th:text="${field.status.name()}"></td>
+                <td>
+                    <button type="button"
+                            class="btn btn-sm"
+                            th:classappend="${field.status.name() == 'AVAILABLE'} ? 'btn-success' : 'btn-warning'"
+                            th:text="${field.status.name() == 'AVAILABLE'} ? 'Đang hoạt động' : 'Bảo trì'"
+                            data-bs-toggle="modal"
+                            data-bs-target="#statusModal"
+                            th:attr="data-id=${field.id},
+                     data-name=${field.name},
+                     data-status=${field.status.name()}">
+                    </button>
+                </td>
                 <td>
                     <button type="button"
                             class="btn btn-primary btn-sm"
@@ -31,8 +42,6 @@
                             th:attr="data-id=${field.id}, data-name=${field.name}">
                         Điều chỉnh giá
                     </button>
-                    <a th:href="@{/owners/yard/status/{id}(id=${field.id})}" class="btn btn-sm btn-danger"
-                    >Đổi trạng thái</a>
                 </td>
 
             </tr>
@@ -123,6 +132,32 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="statusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận đổi trạng thái</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form id="statusForm" method="get">
+                    <div class="modal-body">
+                        <p id="confirmText"></p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Xác nhận</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Hủy
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 
     <script>
         const priceModal = document.getElementById('priceModal');
@@ -136,6 +171,33 @@
 
             document.getElementById('fieldIdInput').value = fieldId;
             document.getElementById('fieldNameInput').value = fieldName;
+        });
+    </script>
+
+    <script>
+        const statusModal = document.getElementById('statusModal');
+
+        statusModal.addEventListener('show.bs.modal', function (event) {
+
+            const button = event.relatedTarget;
+
+            const fieldId = button.getAttribute('data-id');
+            const fieldName = button.getAttribute('data-name');
+            const status = button.getAttribute('data-status');
+
+            // Gọi lại đúng endpoint cũ của bạn
+            document.getElementById('statusForm').action =
+                "/owners/yard/status/" + fieldId;
+
+            const confirmText = document.getElementById('confirmText');
+
+            if (status === 'AVAILABLE') {
+                confirmText.innerText =
+                    "Bạn có chắc muốn chuyển sân '" + fieldName + "' sang Bảo trì?";
+            } else {
+                confirmText.innerText =
+                    "Bạn có chắc muốn chuyển sân '" + fieldName + "' sang Đang hoạt động?";
+            }
         });
     </script>
 </section>

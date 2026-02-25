@@ -53,8 +53,8 @@ public class Booking {
     public enum BookingStatus {
         PENDING,
         BOOKED,
-        CANCELLED_BY_CUSTOMER,
-        CANCELLED_BY_OWNER,
+        CANCELED_BY_CUSTOMER,
+        CANCELED_BY_OWNER,
         COMPLETED
     }
 }

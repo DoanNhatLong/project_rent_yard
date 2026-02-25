@@ -1,13 +1,11 @@
 package com.example.project_rent_yard.service;
 
-import com.example.project_rent_yard.dto.AddServiceForm;
-import com.example.project_rent_yard.dto.BookingFilter;
-import com.example.project_rent_yard.dto.SearchDto;
-import com.example.project_rent_yard.dto.ViewBookingDto;
+import com.example.project_rent_yard.dto.*;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Field;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,4 +23,5 @@ public interface IBookingService {
     Page<ViewBookingDto> getAllForAdmin(Pageable pageable, Booking.BookingStatus status, String userName, LocalDate bookingDate);
     Page<ViewBookingDto> getAllForAdmin(Pageable pageable, BookingFilter bookingFilter);
     void saveServices(AddServiceForm form);
+    List<BookingHistoryDto> getBookingHistoryForUser( Integer userId);
 }

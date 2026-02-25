@@ -3,6 +3,7 @@ package com.example.project_rent_yard.controller.owner;
 import com.example.project_rent_yard.dto.FieldCreateDto;
 import com.example.project_rent_yard.entity.Field;
 import com.example.project_rent_yard.repository.projection.ServiceBookingView;
+import com.example.project_rent_yard.repository.projection.ServiceStatisticView;
 import com.example.project_rent_yard.service.IFieldService;
 import com.example.project_rent_yard.service.IServiceBookingService;
 import jakarta.validation.Valid;
@@ -16,7 +17,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 @Controller
 @RequestMapping("/owners")
@@ -92,8 +94,92 @@ public class OwnerController {
 
     @GetMapping("/profit")
     public String goProfit(Model model) {
-        List<ServiceBookingView> data = serviceBookingService.getAllServiceBookingViews();
+
+        List<ServiceBookingView> data =
+                serviceBookingService.getAllServiceBookingViews();
+
+        long totalRevenue = 0;
+        long totalFieldRevenue = 0;
+        long totalServiceRevenue = 0;
+        long totalBooking = data.size();
+
+        Map<Integer, Long> hourCount = new HashMap<>();
+        Map<LocalDate, Long> revenueByDate = new TreeMap<>();
+        Map<String, Long> revenueByField = new HashMap<>();
+        Map<Integer, Long> revenueByHour = new TreeMap<>();
+
+        for (ServiceBookingView d : data) {
+
+            int start = d.getStartTime().getHour();
+            int end = d.getEndTime().getHour();
+            int slot = end - start;
+
+            long fieldMoney = (long) (slot * d.getFieldPrice());
+            Double serviceMoney =  d.getTotalServiceAmount();
+            long money = (long) (fieldMoney + serviceMoney);
+
+            // ===== KPI =====
+            totalFieldRevenue += fieldMoney;
+            totalServiceRevenue += serviceMoney;
+            totalRevenue += money;
+
+            // ===== Peak time =====
+            for (int h = start; h < end; h++) {
+                hourCount.merge(h, 1L, Long::sum);
+            }
+
+            // ===== Reports =====
+            revenueByDate.merge(d.getBookingDate(), money, Long::sum);
+            revenueByField.merge(d.getFieldName(), money, Long::sum);
+            revenueByHour.merge(start, money, Long::sum);
+        }
+
+        Integer peakTime = hourCount.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
         model.addAttribute("data", data);
+        model.addAttribute("totalRevenue", totalRevenue);
+        model.addAttribute("totalFieldRevenue", totalFieldRevenue);
+        model.addAttribute("totalServiceRevenue", totalServiceRevenue);
+        model.addAttribute("totalBooking", totalBooking);
+        model.addAttribute("peakTime", peakTime);
+
+        model.addAttribute("revenueByDate", revenueByDate);
+        model.addAttribute("revenueByField", revenueByField);
+        model.addAttribute("revenueByHour", revenueByHour);
+
+        // ===== SERVICE STATISTICS =====
+        List<ServiceStatisticView> serviceStats =
+                serviceBookingService.getServiceStatistics();
+
+        Map<String, Long> serviceUsage = new LinkedHashMap<>();
+        Map<String, Long> revenueByService = new LinkedHashMap<>();
+
+        for (ServiceStatisticView s : serviceStats) {
+
+            serviceUsage.put(
+                    s.getServiceName(),
+                    s.getTotalQuantity()
+            );
+
+            revenueByService.put(
+                    s.getServiceName(),
+                    s.getTotalRevenue().longValue()
+            );
+        }
+
+        ServiceStatisticView topService =
+                serviceStats.isEmpty() ? null : serviceStats.get(0);
+
+        model.addAttribute("serviceUsage", serviceUsage);
+        model.addAttribute("revenueByService", revenueByService);
+        model.addAttribute("topService", topService);
+
         return "/owner/profit";
     }
+
+
 }

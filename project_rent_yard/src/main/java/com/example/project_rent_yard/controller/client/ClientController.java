@@ -1,9 +1,6 @@
 package com.example.project_rent_yard.controller.client;
 
-import com.example.project_rent_yard.dto.BookingDto;
-import com.example.project_rent_yard.dto.ForeCastItem;
-import com.example.project_rent_yard.dto.SearchDto;
-import com.example.project_rent_yard.dto.TimeSlotDto;
+import com.example.project_rent_yard.dto.*;
 import com.example.project_rent_yard.entity.Booking;
 import com.example.project_rent_yard.entity.Field;
 import com.example.project_rent_yard.entity.Service;
@@ -218,6 +215,7 @@ public class ClientController {
         List<Booking> bookingList = bookingService.findBookingsByBookingDateAndFieldId(localDate, id);
         List<TimeSlotDto> slots = timeSlotDtoService.buildSlots(bookingList);
         System.out.println(bookingList.size());
+        System.out.println(slots.size());
         model.addAttribute("slots", slots);
         model.addAttribute("field", field);
         return "/client/detail";
@@ -339,6 +337,20 @@ public class ClientController {
         }
         String vnPayUrl = vnPayService.createVnPayUrl(firstBooking.getId(), totalCost);
         return "redirect:" + vnPayUrl;
+    }
+
+    @GetMapping("/history")
+    public String goHistory(
+            Model model,
+            HttpSession session
+    ) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        List<BookingHistoryDto> history = bookingService.getBookingHistoryForUser(user.getId());
+        model.addAttribute("history", history);
+        return "/client/history";
     }
 
 

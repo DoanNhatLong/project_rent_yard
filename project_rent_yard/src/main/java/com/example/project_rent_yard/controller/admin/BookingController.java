@@ -109,7 +109,7 @@ public class BookingController {
             @PathVariable("id") Integer bookingId,
             RedirectAttributes redirectAttributes) {
         Booking booking = bookingService.findBookingById(bookingId);
-        booking.setStatus(Booking.BookingStatus.CANCELLED_BY_OWNER);
+        booking.setStatus(Booking.BookingStatus.CANCELED_BY_OWNER);
         bookingService.updateBooking(booking);
         redirectAttributes.addFlashAttribute("message", "Booking đã được hủy thành công!");
         return "redirect:/admins/booking";

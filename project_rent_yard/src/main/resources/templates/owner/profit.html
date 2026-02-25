@@ -2,23 +2,256 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="owner/layout :: layout(~{::section}, 'Dashboard')">
 
-<section>
-  <h3>Profit</h3>
 
-  <div class="card">
-    <div class="card-body">
-      <table>
-        <tr th:each="row : ${data}">
-          <td th:text="${row.id}"></td>
-          <td th:text="${row.quantity}"></td>
-          <td th:text="${row.fieldName}"></td>
-          <td th:text="${row.serviceName}"></td>
-          <td th:text="${row.fieldPrice}"></td>
-          <td th:text="${row.servicePrice}"></td>
-        </tr>
-      </table>
+<section>
+  <link rel="stylesheet" href="/css/profit.css">
+  <div class="kpi-container">
+
+    <div class="kpi-card">
+      <h4>Tổng doanh thu</h4>
+      <p th:text="${#numbers.formatInteger(totalRevenue,0,'COMMA')}"></p>
+    </div>
+
+    <div class="kpi-card">
+      <h4>Doanh thu sân</h4>
+      <p th:text="${#numbers.formatInteger(totalFieldRevenue,0,'COMMA')}"></p>
+    </div>
+
+    <div class="kpi-card">
+      <h4>Doanh thu dịch vụ</h4>
+      <p th:text="${#numbers.formatInteger(totalServiceRevenue,0,'COMMA')}"></p>
+    </div>
+
+    <div class="kpi-card">
+      <h4>Tổng booking</h4>
+      <p th:text="${totalBooking}"></p>
+    </div>
+
+    <div class="kpi-card">
+      <h4>Giờ cao điểm</h4>
+      <p th:text="${peakTime != null ? peakTime + ':00' : 'N/A'}"></p>
+    </div>
+
+  </div>
+
+  <div class="chart-row">
+
+    <div class="chart-card">
+      <h4>Doanh thu theo ngày</h4>
+      <div class="chart-wrapper">
+        <canvas id="revenueByDateChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h4>Doanh thu theo sân</h4>
+      <div class="chart-wrapper">
+        <canvas id="revenueByFieldChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="detail-card">
+    <h4>Chi tiết doanh thu theo ngày</h4>
+
+    <div class="daily-grid">
+      <div class="daily-item" th:each="entry : ${revenueByDate}">
+        <div class="daily-date" th:text="${entry.key}"></div>
+        <div class="daily-value"
+             th:text="${#numbers.formatInteger(entry.value,0,'COMMA')} + ' đ'">
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="top-service-card" th:if="${topService != null}">
+    <div class="top-left">
+      <h4>🏆 Dịch vụ được dùng nhiều nhất</h4>
+      <h2 th:text="${topService.serviceName}"></h2>
+      <p>
+        Số lượng:
+        <span th:text="${topService.totalQuantity}"></span>
+      </p>
+    </div>
+
+    <div class="top-right">
+      <p class="top-revenue"
+         th:text="${#numbers.formatInteger(topService.totalRevenue,0,'COMMA')} + ' đ'">
+      </p>
+    </div>
+  </div>
+
+  <div class="service-chart-row">
+
+    <div class="chart-card">
+      <h4>Số lần sử dụng dịch vụ</h4>
+      <div class="chart-wrapper">
+        <canvas id="serviceUsageChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h4>Tỷ lệ sử dụng (%)</h4>
+      <div class="chart-wrapper">
+        <canvas id="servicePieChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="service-revenue-card">
+    <h4>Doanh thu từng dịch vụ</h4>
+
+    <div class="service-grid">
+      <div class="service-item"
+           th:each="entry : ${revenueByService}">
+        <div class="service-name"
+             th:text="${entry.key}"></div>
+        <div class="service-value"
+             th:text="${#numbers.formatInteger(entry.value,0,'COMMA')} + ' đ'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+
+      // ==============================
+      // REVENUE BY DATE
+      // ==============================
+      const revenueData = [[${revenueByDate}]];
+      const dateLabels = Object.keys(revenueData);
+      const dateValues = Object.values(revenueData);
+
+      const revenueDateCanvas = document.getElementById('revenueByDateChart');
+      if (revenueDateCanvas) {
+        new Chart(revenueDateCanvas, {
+          type: 'bar',
+          data: {
+            labels: dateLabels,
+            datasets: [{
+              label: 'Doanh thu',
+              data: dateValues,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                ticks: {
+                  maxRotation: 90,
+                  minRotation: 90
+                }
+              },
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+
+
+      // ==============================
+      // REVENUE BY FIELD
+      // ==============================
+      const fieldData = [[${revenueByField}]];
+      const fieldLabels = Object.keys(fieldData);
+      const fieldValues = Object.values(fieldData);
+
+      const revenueFieldCanvas = document.getElementById('revenueByFieldChart');
+      if (revenueFieldCanvas) {
+        new Chart(revenueFieldCanvas, {
+          type: 'bar',
+          data: {
+            labels: fieldLabels,
+            datasets: [{
+              label: 'Doanh thu',
+              data: fieldValues,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+
+
+      // ==============================
+      // SERVICE USAGE
+      // ==============================
+      const serviceData = [[${serviceUsage}]];
+      const serviceLabels = Object.keys(serviceData);
+      const serviceValues = Object.values(serviceData);
+
+      const serviceBarCanvas = document.getElementById('serviceUsageChart');
+      if (serviceBarCanvas) {
+        new Chart(serviceBarCanvas, {
+          type: 'bar',
+          data: {
+            labels: serviceLabels,
+            datasets: [{
+              label: 'Số lần sử dụng',
+              data: serviceValues,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+
+
+      // ==============================
+      // SERVICE PIE CHART
+      // ==============================
+      const servicePieCanvas = document.getElementById('servicePieChart');
+      if (servicePieCanvas) {
+        new Chart(servicePieCanvas, {
+          type: 'pie',
+          data: {
+            labels: serviceLabels,
+            datasets: [{
+              data: serviceValues
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+      }
+
+    });
+  </script>
 </section>
 
 </html>

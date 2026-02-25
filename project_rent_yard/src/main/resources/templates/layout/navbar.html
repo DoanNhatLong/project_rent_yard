@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <title>Checkout</title>
     <th:block th:replace="layout/layout :: library"></th:block>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+
+</head>
 <body>
+
 <th:block th:fragment="navbar">
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom main-navbar">
         <div class="container-fluid px-4">
@@ -24,17 +29,19 @@
                             Trang chủ
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            Tin tức
-                        </a>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="/clients/support">
                             Hỗ trợ
                         </a>
                     </li>
                 </ul>
+            </div>
+
+            <div class="navbar-nav ms-auto align-items-center">
+                <span class="nav-link btn nav-guide-btn text-primary " id="startTourBtn">
+    CLICK HERE 👆
+</span>
             </div>
 
             <!-- RIGHT -->
@@ -47,14 +54,11 @@
 
                 <li class="nav-item dropdown me-3">
                     <a class="nav-link fw-semibold"
-                       href="#"
-                       data-bs-toggle="dropdown">
-                        🏠 Khu vực
+                       th:href="@{/clients/history}"
+                       >
+                        📅 Lịch sử đặt sân
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Thanh Xuân, Hà Nội</a></li>
-                        <li><a class="dropdown-item" href="#">Cầu Giấy, Hà Nội</a></li>
-                    </ul>
+
                 </li>
 
                 <li class="nav-item dropdown me-3">
@@ -98,6 +102,6 @@
         </div>
     </nav>
 
-
 </th:block>
+
 </body>

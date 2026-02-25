@@ -6,6 +6,7 @@ import com.example.project_rent_yard.repository.IBookingRepository;
 import com.example.project_rent_yard.repository.IServiceBookingRepository;
 import com.example.project_rent_yard.repository.IServiceRepository;
 import com.example.project_rent_yard.repository.projection.ServiceBookingView;
+import com.example.project_rent_yard.repository.projection.ServiceStatisticView;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.project_rent_yard.entity.Service;
 
@@ -51,5 +52,10 @@ public class ServiceBookingService implements IServiceBookingService {
     @Override
     public List<ServiceBookingView> getAllServiceBookingViews() {
         return serviceBookingRepository.getAllServiceBookingViews();
+    }
+
+    @Override
+    public List<ServiceStatisticView> getServiceStatistics() {
+        return serviceBookingRepository.getServiceStatistics();
     }
 }
